@@ -1,142 +1,144 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   FaChevronUp,
   FaChevronDown,
   FaEdit,
-  FaEye,
-  FaTrash,
+  FaList,
+  FaTrashAlt,
   FaSearch,
-} from 'react-icons/fa';
-import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
-import ProductModal from './ProductModal'; // Import komponen modal
+} from "react-icons/fa";
+import { FiArrowUp, FiArrowDown } from "react-icons/fi";
+import ProductModal from "./ProductModal";
 
 export default function KatalogProduk() {
   const [sortConfig, setSortConfig] = useState({
-    key: 'tanggal',
-    direction: 'desc',
+    key: "tanggal",
+    direction: "desc",
   });
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('Semua Kategori');
-  const [selectedAvailability, setSelectedAvailability] = useState('all'); // 'all', 'Tersedia', 'Habis'
+  const [selectedCategory, setSelectedCategory] = useState("Semua Kategori");
+  const [selectedAvailability, setSelectedAvailability] = useState("all"); // 'all', 'Tersedia', 'Habis'
 
   // Data produk
   const initialProducts = [
     {
       id: 1, // Tambahkan ID unik untuk setiap produk
-      nama: 'Snorkeling',
-      ketersediaan: 'Tersedia',
-      kategori: 'Activity',
-      tanggal: '2024-12-11',
+      nama: "Snorkeling",
+      ketersediaan: "Tersedia",
+      kategori: "Activity",
+      tanggal: "2024-12-11",
       rating: 4.7,
       harga: 200000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 2,
-      nama: 'Nusa Penida',
-      ketersediaan: 'Habis',
-      kategori: 'Tour',
-      tanggal: '2024-12-09',
+      nama: "Nusa Penida",
+      ketersediaan: "Habis",
+      kategori: "Tour",
+      tanggal: "2024-12-09",
       rating: 4.8,
       harga: 150000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 3,
-      nama: 'Pantai Pandawa',
-      ketersediaan: 'Tersedia',
-      kategori: 'Attraction',
-      tanggal: '2024-12-13',
+      nama: "Pantai Pandawa",
+      ketersediaan: "Tersedia",
+      kategori: "Attraction",
+      tanggal: "2024-12-13",
       rating: 4.9,
       harga: 135000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 4,
-      nama: 'Rafting Ayung',
-      ketersediaan: 'Tersedia',
-      kategori: 'Activity',
-      tanggal: '2024-11-25',
+      nama: "Rafting Ayung",
+      ketersediaan: "Tersedia",
+      kategori: "Activity",
+      tanggal: "2024-11-25",
       rating: 4.6,
       harga: 250000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 5,
-      nama: 'Tanah Lot',
-      ketersediaan: 'Tersedia',
-      kategori: 'Attraction',
-      tanggal: '2024-12-01',
+      nama: "Tanah Lot",
+      ketersediaan: "Tersedia",
+      kategori: "Attraction",
+      tanggal: "2024-12-01",
       rating: 4.5,
       harga: 100000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 6,
-      nama: 'Ubud Tour',
-      ketersediaan: 'Habis',
-      kategori: 'Tour',
-      tanggal: '2024-11-30',
+      nama: "Ubud Tour",
+      ketersediaan: "Habis",
+      kategori: "Tour",
+      tanggal: "2024-11-30",
       rating: 4.7,
       harga: 180000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 7,
-      nama: 'Kintamani Tour',
-      ketersediaan: 'Tersedia',
-      kategori: 'Tour',
-      tanggal: '2024-12-05',
+      nama: "Kintamani Tour",
+      ketersediaan: "Tersedia",
+      kategori: "Tour",
+      tanggal: "2024-12-05",
       rating: 4.8,
       harga: 220000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 8,
-      nama: 'Tirta Empul',
-      ketersediaan: 'Tersedia',
-      kategori: 'Attraction',
-      tanggal: '2024-12-10',
+      nama: "Tirta Empul",
+      ketersediaan: "Tersedia",
+      kategori: "Attraction",
+      tanggal: "2024-12-10",
       rating: 4.4,
       harga: 120000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 9,
-      nama: 'Bali Safari',
-      ketersediaan: 'Tersedia',
-      kategori: 'Attraction',
-      tanggal: '2024-12-15',
+      nama: "Bali Safari",
+      ketersediaan: "Tersedia",
+      kategori: "Attraction",
+      tanggal: "2024-12-15",
       rating: 4.3,
       harga: 300000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
     {
       id: 10,
-      nama: 'Waterbom Bali',
-      ketersediaan: 'Habis',
-      kategori: 'Activity',
-      tanggal: '2024-12-20',
+      nama: "Waterbom Bali",
+      ketersediaan: "Habis",
+      kategori: "Activity",
+      tanggal: "2024-12-20",
       rating: 4.9,
       harga: 350000,
       gambar:
-        'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        "https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     },
   ];
 
   const [products, setProducts] = useState(initialProducts);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add', 'edit', atau 'view'
+  const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
   const [selectedProduct, setSelectedProduct] = useState(null); // Produk yang dipilih (untuk edit/view)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   // Fungsi untuk membuka modal
   const openModal = (mode, product = null) => {
@@ -157,7 +159,10 @@ export default function KatalogProduk() {
 
   // Fungsi untuk menambahkan produk baru
   const handleAddProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct, id: Date.now() }]);
+    setProducts((prevProducts) => [
+      ...prevProducts,
+      { ...newProduct, id: Date.now() },
+    ]);
   };
 
   // Fungsi untuk mengupdate produk
@@ -169,32 +174,39 @@ export default function KatalogProduk() {
   };
 
   // Fungsi untuk menghapus produk
-  const handleDeleteProduct = (productId) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+  const handleDeleteProduct = (product) => {
+    setProductToDelete(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (productToDelete) {
       const updatedProducts = products.filter(
-        (product) => product.id !== productId
+        (product) => product.id !== productToDelete.id
       );
       setProducts(updatedProducts);
+      setIsDeleteModalOpen(false);
+      setProductToDelete(null);
     }
   };
 
   // Fungsi untuk mengurutkan data
   const sortData = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction }); // Update sortConfig.key
 
     // Sorting logic (existing code)
     const sortedProducts = [...products].sort((a, b) => {
-      if (key === 'tanggal') {
+      if (key === "tanggal") {
         const dateA = new Date(a.tanggal);
         const dateB = new Date(b.tanggal);
-        return direction === 'asc' ? dateA - dateB : dateB - dateA;
+        return direction === "asc" ? dateA - dateB : dateB - dateA;
       }
-      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
       return 0;
     });
 
@@ -205,7 +217,7 @@ export default function KatalogProduk() {
   const getSortIcon = (key) => {
     if (sortConfig.key === key) {
       // Saat kolom aktif, gunakan panah biasa (↑ atau ↓)
-      return sortConfig.direction === 'asc' ? (
+      return sortConfig.direction === "asc" ? (
         <FiArrowUp /> // Panah ke atas untuk ascending
       ) : (
         <FiArrowDown /> // Panah ke bawah untuk descending
@@ -221,7 +233,7 @@ export default function KatalogProduk() {
   };
 
   // Filter produk
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Modifikasi filteredProducts untuk include search query
   const filteredProducts = products.filter((product) => {
@@ -229,10 +241,10 @@ export default function KatalogProduk() {
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const categoryMatch =
-      selectedCategory === 'Semua Kategori' ||
+      selectedCategory === "Semua Kategori" ||
       product.kategori === selectedCategory;
     const availabilityMatch =
-      selectedAvailability === 'all' ||
+      selectedAvailability === "all" ||
       product.ketersediaan === selectedAvailability;
 
     return nameMatch && categoryMatch && availabilityMatch;
@@ -241,11 +253,11 @@ export default function KatalogProduk() {
   // Perbaikan 2: Tambahkan useEffect untuk handle klik di luar dropdown
   useEffect(() => {
     // Jika sortConfig.key berubah, reset filter dan dropdown
-    if (sortConfig.key !== 'ketersediaan') {
-      setSelectedAvailability('all'); // Reset filter ketersediaan
+    if (sortConfig.key !== "ketersediaan") {
+      setSelectedAvailability("all"); // Reset filter ketersediaan
     }
-    if (sortConfig.key !== 'kategori') {
-      setSelectedCategory('Semua Kategori'); // Reset filter kategori
+    if (sortConfig.key !== "kategori") {
+      setSelectedCategory("Semua Kategori"); // Reset filter kategori
       setIsCategoryDropdownOpen(false); // Tutup dropdown kategori
     }
   }, [sortConfig.key]);
@@ -270,10 +282,10 @@ export default function KatalogProduk() {
 
           {/* Tombol Tambah Produk */}
           <button
-            onClick={() => openModal('add')} // Buka modal dengan mode 'add'
+            onClick={() => openModal("add")} // Buka modal dengan mode 'add'
             className="px-4 py-2 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
             style={{
-              background: 'linear-gradient(to bottom, #4CAF50, #00CA08)',
+              background: "linear-gradient(to bottom, #4CAF50, #00CA08)",
             }}
           >
             <span>+</span>
@@ -285,7 +297,7 @@ export default function KatalogProduk() {
       {/* Tabel Produk */}
       <div className="">
         <table className="w-full text-left table-fixed border-spacing-x-4">
-          {' '}
+          {" "}
           {/* Tambahkan table-auto */}
           <thead className="sticky top-0 bg-white">
             <tr className="text-gray-600 border-b border-gray-200">
@@ -302,24 +314,24 @@ export default function KatalogProduk() {
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
                 onClick={() => {
                   const newStatus =
-                    selectedAvailability === 'all'
-                      ? 'Tersedia'
-                      : selectedAvailability === 'Tersedia'
-                      ? 'Habis'
-                      : 'all';
+                    selectedAvailability === "all"
+                      ? "Tersedia"
+                      : selectedAvailability === "Tersedia"
+                      ? "Habis"
+                      : "all";
                   setSelectedAvailability(newStatus);
-                  setSortConfig({ key: 'ketersediaan', direction: 'asc' }); // Aktifkan underline
+                  setSortConfig({ key: "ketersediaan", direction: "asc" }); // Aktifkan underline
                 }}
               >
                 <div className="flex items-center">
                   <span className="relative mr-2">
                     Ketersediaan
-                    {sortConfig.key === 'ketersediaan' && (
+                    {sortConfig.key === "ketersediaan" && (
                       <div
                         className="absolute bottom-[-13px] left-0 w-[calc(100%-1rem)] h-[2px]"
                         style={{
                           background:
-                            'linear-gradient(to right, #517897, #006FFF)',
+                            "linear-gradient(to right, #517897, #006FFF)",
                         }}
                       ></div>
                     )}
@@ -328,11 +340,11 @@ export default function KatalogProduk() {
                     {/* Indicator status */}
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        selectedAvailability === 'Tersedia'
-                          ? 'bg-green-500'
-                          : selectedAvailability === 'Habis'
-                          ? 'bg-red-500'
-                          : 'bg-gray-300'
+                        selectedAvailability === "Tersedia"
+                          ? "bg-green-500"
+                          : selectedAvailability === "Habis"
+                          ? "bg-red-500"
+                          : "bg-gray-300"
                       }`}
                     ></div>
                   </div>
@@ -344,18 +356,18 @@ export default function KatalogProduk() {
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer relative"
                 onClick={() => {
                   setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
-                  setSortConfig({ key: 'kategori', direction: 'asc' }); // Aktifkan underline
+                  setSortConfig({ key: "kategori", direction: "asc" }); // Aktifkan underline
                 }}
               >
                 <div className="flex items-center">
                   <span className="relative mr-2">
                     Kategori
-                    {sortConfig.key === 'kategori' && (
+                    {sortConfig.key === "kategori" && (
                       <div
                         className="absolute bottom-[-13px] left-0 w-full h-[2px]"
                         style={{
                           background:
-                            'linear-gradient(to right, #517897, #006FFF)',
+                            "linear-gradient(to right, #517897, #006FFF)",
                         }}
                       ></div>
                     )}
@@ -368,25 +380,25 @@ export default function KatalogProduk() {
                   <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                     <div
                       className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => setSelectedCategory('Semua Kategori')}
+                      onClick={() => setSelectedCategory("Semua Kategori")}
                     >
                       Semua Kategori
                     </div>
                     <div
                       className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => setSelectedCategory('Activity')}
+                      onClick={() => setSelectedCategory("Activity")}
                     >
                       Activity
                     </div>
                     <div
                       className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => setSelectedCategory('Tour')}
+                      onClick={() => setSelectedCategory("Tour")}
                     >
                       Tour
                     </div>
                     <div
-                      className="p-2 hover:bg-fgray-100 cursor-pointer"
-                      onClick={() => setSelectedCategory('Attraction')}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setSelectedCategory("Attraction")}
                     >
                       Attraction
                     </div>
@@ -397,66 +409,66 @@ export default function KatalogProduk() {
               {/* Perbaikan 4: Ganti min-w-[150px] dengan min-w-[15%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
-                onClick={() => sortData('tanggal')}
+                onClick={() => sortData("tanggal")}
               >
                 <div className="flex items-center">
                   <span className="relative mr-2">
                     Tanggal
-                    {sortConfig.key === 'tanggal' && (
+                    {sortConfig.key === "tanggal" && (
                       <div
                         className="absolute bottom-[-13px] left-0 w-full h-[2px]"
                         style={{
                           background:
-                            'linear-gradient(to right, #517897, #006FFF)',
+                            "linear-gradient(to right, #517897, #006FFF)",
                         }}
                       ></div>
                     )}
                   </span>
-                  {getSortIcon('tanggal')}
+                  {getSortIcon("tanggal")}
                 </div>
               </th>
 
               {/* Perbaikan 5: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th
                 className="py-3 w-[11%] min-w-[110px] cursor-pointer"
-                onClick={() => sortData('rating')}
+                onClick={() => sortData("rating")}
               >
                 <div className="flex items-center">
                   <span className="relative mr-2">
                     Rating
-                    {sortConfig.key === 'rating' && (
+                    {sortConfig.key === "rating" && (
                       <div
                         className="absolute bottom-[-13px] left-0 w-full h-[2px]"
                         style={{
                           background:
-                            'linear-gradient(to right, #517897, #006FFF)',
+                            "linear-gradient(to right, #517897, #006FFF)",
                         }}
                       ></div>
                     )}
                   </span>
-                  {getSortIcon('rating')}
+                  {getSortIcon("rating")}
                 </div>
               </th>
 
               {/* Perbaikan 6: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
-                onClick={() => sortData('harga')}
+                onClick={() => sortData("harga")}
               >
                 <div className="flex items-center">
                   <span className="relative mr-2">
                     Harga
-                    {sortConfig.key === 'harga' && (
+                    {sortConfig.key === "harga" && (
                       <div
                         className="absolute bottom-[-13px] left-0 w-full h-[2px]"
                         style={{
                           background:
-                            'linear-gradient(to right, #517897, #006FFF)',
+                            "linear-gradient(to right, #517897, #006FFF)",
                         }}
                       ></div>
                     )}
                   </span>
-                  {getSortIcon('harga')}
+                  {getSortIcon("harga")}
                 </div>
               </th>
 
@@ -475,9 +487,9 @@ export default function KatalogProduk() {
                 <td className="py-4">
                   <span
                     className={`px-2 py-1 rounded-full text-sm ${
-                      produk.ketersediaan === 'Tersedia'
-                        ? 'bg-green-100 text-green-600'
-                        : 'bg-red-100 text-red-600'
+                      produk.ketersediaan === "Tersedia"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
                     }`}
                   >
                     {produk.ketersediaan}
@@ -486,29 +498,29 @@ export default function KatalogProduk() {
                 <td className="py-4">{produk.kategori}</td>
                 <td className="py-4">{produk.tanggal}</td>
                 <td className="py-4">
-                  <span className="text-amber-400 text-xl">★</span>{' '}
+                  <span className="text-amber-400 text-xl">★</span>{" "}
                   {produk.rating}
                 </td>
                 <td className="py-4">Rp {produk.harga.toLocaleString()}</td>
                 <td className="py-4">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => openModal('edit', produk)}
+                      onClick={() => openModal("edit", produk)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       <FaEdit />
                     </button>
                     <button
-                      onClick={() => openModal('view', produk)}
+                      onClick={() => openModal("view", produk)}
                       className="text-green-500 hover:text-green-700"
                     >
-                      <FaEye />
+                      <FaList />
                     </button>
                     <button
-                      onClick={() => handleDeleteProduct(produk.id)}
+                      onClick={() => handleDeleteProduct(produk)}
                       className="text-red-500 hover:text-red-700"
                     >
-                      <FaTrash />
+                      <FaTrashAlt />
                     </button>
                   </div>
                 </td>
@@ -526,8 +538,18 @@ export default function KatalogProduk() {
           mode={modalMode}
           product={selectedProduct}
           onSubmit={
-            modalMode === 'add' ? handleAddProduct : handleUpdateProduct
+            modalMode === "add" ? handleAddProduct : handleUpdateProduct
           }
+        />
+      )}
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <ProductModal
+          isOpen={isDeleteModalOpen}
+          onRequestClose={() => setIsDeleteModalOpen(false)}
+          mode="delete"
+          product={productToDelete}
+          onSubmit={confirmDelete}
         />
       )}
     </div>

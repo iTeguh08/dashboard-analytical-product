@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import { Tag, Clock, Barcode, Calendar, Hash } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Modal from "react-modal";
+import { Tag, Clock, Calendar, Hash, AlertTriangle } from "lucide-react";
 
 const getCustomStyles = (mode) => ({
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    transform: 'translate(-50%, -50%)',
-    width: mode === 'view' ? '700px' : '600px', // Increased width for edit mode
-    maxHeight: '100vh',
-    padding: '0',
-    borderRadius: '0',
-    overflow: 'hidden',
-    border: 'none',
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    transform: "translate(-50%, -50%)",
+    width: mode === "view" ? "700px" : "600px", // Increased width for edit mode
+    width: mode === "delete" ? "400px" : mode === "view" ? "700px" : "600px",
+    padding: "0",
+    borderRadius: "0",
+    overflow: "hidden",
+    border: "none",
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 
@@ -40,24 +40,19 @@ const gradientStyles = `
     transition: opacity 0.3s ease;
   }
 
+  .gradient-button-red {
+    background-image: linear-gradient(to top, #FF0000, #FF6A13);
+    color: white;
+    border: none;
+    transition: opacity 0.3s ease;
+  }
+
   .gradient-button-blue:hover {
     opacity: 0.9;
   }
 `;
 
 const scrollableContent = `
-  .modal-scrollable {
-    max-height: 100vh;
-    overflow-y: auto;
-    padding: 1rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .modal-scrollable::-webkit-scrollbar {
-    display: none;
-  }
-
   .grid-cols-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -73,7 +68,7 @@ const scrollableContent = `
   }
 `;
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 export default function ProductModal({
   isOpen,
@@ -82,85 +77,124 @@ export default function ProductModal({
   product,
   onSubmit,
 }) {
-  const [productName, setProductName] = useState('');
-  const [availability, setAvailability] = useState('Tersedia');
-  const [category, setCategory] = useState('Tour');
-  const [date, setDate] = useState('');
+  const [productName, setProductName] = useState("");
+  const [availability, setAvailability] = useState("Tersedia");
+  const [category, setCategory] = useState("Tour");
+  const [date, setDate] = useState("");
   const [rating, setRating] = useState(0);
   const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [productId, setProductId] = useState('');
-  const [duration, setDuration] = useState('');
+  const [description, setDescription] = useState("");
+  const [files, setFiles] = useState([]); // Menyimpan file-file yang diupload
+  const [previewUrls, setPreviewUrls] = useState([]); // Menyimpan URL preview gambar
+  const [imageUrl, setImageUrl] = useState("");
+  const [productId, setProductId] = useState("");
+  const [duration, setDuration] = useState("");
+  const [selectedFilesCount, setSelectedFilesCount] = useState(0); // Tambahkan state baru
+  const [file, setFile] = useState(null); // Declare setFile
 
   // Generate Product ID untuk mode tambah
   useEffect(() => {
-    if (mode === 'add') {
+    if (mode === "add") {
       setProductId(`PROD-${Math.floor(1000 + Math.random() * 9000)}`);
     }
   }, [mode]);
 
   useEffect(() => {
-    if (mode === 'edit' || mode === 'view') {
+    if (mode === "edit" || mode === "view") {
+      // Memuat data produk ke state
       setProductName(product.nama);
       setAvailability(product.ketersediaan);
       setCategory(product.kategori);
       setDate(product.tanggal);
       setRating(product.rating);
       setPrice(product.harga);
-      setDescription(product.deskripsi || '');
-      setImageUrl(product.gambar || '');
-      setPreviewUrl('');
-      setProductId(product.id || '');
-      setDuration(product.durasi || '');
+      setDescription(product.deskripsi || "");
+      setImageUrl(product.gambar); // Kembalikan ini
+      setFiles([]); // Reset files
+      setProductId(product.id || "");
+      setDuration(product.durasi || "");
+
+      // Memuat gambar yang sudah ada ke previewUrls
+      if (product.gambar) {
+        setPreviewUrls([product.gambar]); // Kembalikan ini ke array dengan satu item
+      } else {
+        setPreviewUrls([]);
+      }
     } else {
       resetForm();
     }
   }, [mode, product]);
 
   const resetForm = () => {
-    setProductName('');
-    setAvailability('Tersedia');
-    setCategory('Tour');
-    setDate('');
+    setProductName("");
+    setAvailability("Tersedia");
+    setCategory("Tour");
+    setDate("");
     setRating(0);
     setPrice(0);
-    setDescription('');
-    setFile(null);
-    setImageUrl('');
-    setPreviewUrl('');
-    setDuration('');
+    setDescription("");
+    setFiles([]); // Reset ke array kosong
+    setImageUrl("");
+    setPreviewUrls([]); // Reset ke array kosong
+    setProductId("");
+    setDuration("");
+    setSelectedFilesCount(0); // Reset selectedFilesCount
+    setFile(null); // Reset file
   };
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setPreviewUrl(URL.createObjectURL(selectedFile));
-      setImageUrl('');
-    }
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleFiles = (selectedFiles) => {
+    if (selectedFiles.length === 0) return;
+
+    const newFiles = [...files, ...selectedFiles];
+    setFiles(newFiles);
+
+    const newPreviewUrls = [
+      ...previewUrls,
+      ...selectedFiles.map((file) => URL.createObjectURL(file)),
+    ];
+    setPreviewUrls(newPreviewUrls);
+    setSelectedFilesCount(newFiles.length);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      setPreviewUrl(URL.createObjectURL(droppedFile));
-      setImageUrl('');
-    }
+    e.stopPropagation();
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    handleFiles(droppedFiles);
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    handleFiles(selectedFiles);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleRemoveImage = (index) => {
+    const newFiles = files.filter((_, i) => i !== index);
+    const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+    setFiles(newFiles);
+    setPreviewUrls(newPreviewUrls);
+    setSelectedFilesCount(newFiles.length);
   };
 
   const handleImageUrlChange = (e) => {
     const url = e.target.value;
     setImageUrl(url);
-    setPreviewUrl(url);
+    setPreviewUrls(url);
     setFile(null);
   };
 
@@ -170,6 +204,8 @@ export default function ProductModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Membuat objek produk baru
     const newProduct = {
       id: productId,
       nama: productName,
@@ -179,10 +215,15 @@ export default function ProductModal({
       rating: Number.parseFloat(rating),
       harga: Number.parseFloat(price),
       deskripsi: description,
-      gambar: imageUrl || previewUrl,
+      gambar: files.length > 0 ? files[0] : imageUrl, // Kembalikan logika ini
       durasi: duration,
     };
+
+    // Panggil onSubmit dengan data produk
     onSubmit(newProduct);
+
+    // Reset form dan tutup modal
+    resetForm();
     onRequestClose();
   };
 
@@ -190,28 +231,73 @@ export default function ProductModal({
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      style={getCustomStyles(mode)}
+      style={{
+        ...getCustomStyles(mode),
+        content: {
+          ...getCustomStyles(mode).content,
+          height:
+            mode === "delete" ? "auto" : mode === "view" ? "auto" : "100vh", // Tambahkan ini
+          maxHeight: mode === "view" ? "90vh" : "100vh", // Modifikasi ini
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      }}
       contentLabel={`${mode} Produk Modal`}
+      onClick={(e) => {
+        // Tutup modal hanya jika klik terjadi di luar konten modal
+        if (e.target === e.currentTarget) {
+          onRequestClose();
+        }
+      }}
     >
       <style>{gradientStyles}</style>
       <style>{scrollableContent}</style>
 
-      {mode === 'view' ? (
+      {mode === "delete" ? (
+        // Delete Confirmation Modal
+        <div className="p-6">
+          <div className="flex flex-col items-center text-center">
+            <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
+            <h2 className="text-xl font-bold mb-4">Konfirmasi Penghapusan</h2>
+            <p className="mb-6">
+              Apakah Anda yakin ingin menghapus produk "{product?.nama}"?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={onRequestClose}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={onSubmit}
+                className="px-4 py-2 text-white rounded-lg gradient-button-red"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : mode === "view" ? (
         // Tampilan khusus View
-        <div className="flex flex-col md:flex-row" style={{ border: 'none' }}>
+        <div className="flex flex-col md:flex-row" style={{ border: "none" }}>
           {/* Bagian Gambar */}
           <div className="w-full md:w-2/5 p-4 flex items-center justify-center">
             <img
-              src={imageUrl || '/placeholder.svg'}
+              src={imageUrl || "/placeholder.svg"}
               alt={productName}
               className="object-cover w-full h-64 md:h-full rounded-lg shadow-md"
             />
           </div>
 
           {/* Bagian Detail */}
-          <div className="w-full md:w-3/5 p-6 overflow-y-auto">
+          <div className="w-full md:w-3/5 p-6 pl-2 overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-3xl font-bold text-gray-800">
                 {productName}
               </h2>
               <button
@@ -238,15 +324,15 @@ export default function ProductModal({
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="text-xl font-bold text-blue-600">
                   Rp {price.toLocaleString()}
                 </span>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < rating ? 'text-yellow-400' : 'text-gray-300'
+                      className={`w-4 h-4 ${
+                        i < rating ? "text-yellow-400" : "text-gray-300"
                       }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
@@ -320,19 +406,20 @@ export default function ProductModal({
                   Deskripsi
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  {description || 'Tidak ada deskripsi'}
+                  {description || "Tidak ada deskripsi"}
                 </p>
               </div>
             </div>
           </div>
         </div>
-      ) : mode === 'edit' ? (
+      ) : mode === "edit" ? (
         // Tampilan khusus Edit
         <div
-          className="modal-scrollable flex"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation(); // Mencegah event klik menyebar ke parent
+          }}
         >
-          <div className="w-full p-6">
+          <div className="w-full p-10">
             <div className="flex justify-between items-center mb-6 border-b pb-4">
               <h2 className="text-xl font-bold">Edit Produk</h2>
               <button
@@ -359,7 +446,7 @@ export default function ProductModal({
 
             <form onSubmit={handleSubmit}>
               {/* Product ID dan Tanggal */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Produk ID
@@ -385,7 +472,7 @@ export default function ProductModal({
               </div>
 
               {/* Nama Produk dan Durasi */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Nama Produk
@@ -411,7 +498,7 @@ export default function ProductModal({
               </div>
 
               {/* Ketersediaan dan Kategori */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Ketersediaan
@@ -450,7 +537,7 @@ export default function ProductModal({
               </div>
 
               {/* Rating dan Harga */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Rating
@@ -479,58 +566,98 @@ export default function ProductModal({
               </div>
 
               {/* Upload Gambar */}
-              <div className="mb-4">
+              <div className="mb-6 w-full">
                 <label className="block text-sm font-medium mb-2">
                   Upload Gambar
                 </label>
-                <div className="flex gap-4">
-                  {/* Image Preview */}
-                  <div className="w-1/2 aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                    <img
-                      src={previewUrl || imageUrl || '/placeholder.svg'}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  {/* Upload Area */}
-                  <div
-                    className="w-1/2 flex justify-center items-center px-6 pt-5 pb-6 border border-gray-300 border-dashed rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                  >
-                    <label className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                      <div className="space-y-1 text-center">
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          stroke="currentColor"
-                          fill="none"
-                          viewBox="0 0 48 48"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                            strokeWidth="2"
-                          />
-                        </svg>
-                        <div className="flex text-sm text-gray-600 justify-center">
-                          <span className="text-blue-600 hover:text-blue-500">
-                            Klik untuk upload
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG maksimal 5MB
-                        </p>
-                      </div>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        onChange={handleFileChange}
+                <div
+                  className="w-full border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragEnter={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                >
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg"
+                    multiple
+                    onChange={(e) => handleFiles(Array.from(e.target.files))}
+                    className="hidden"
+                    id="fileInput"
+                  />
+                  <label htmlFor="fileInput" className="cursor-pointer">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
-                    </label>
+                    </svg>
+                    <p className="mt-1 text-sm text-gray-600">
+                      <span className="font-medium text-blue-600 hover:text-blue-500">
+                        Klik untuk upload
+                      </span>{" "}
+                      atau drag and drop
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500">
+                      PNG, JPG up to 5MB
+                    </p>
+                  </label>
+                </div>
+                {selectedFilesCount > 0 && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    {selectedFilesCount} file{selectedFilesCount > 1 ? "s" : ""}{" "}
+                    dipilih
+                  </p>
+                )}
+              </div>
+
+              {/* Preview Gambar */}
+              {previewUrls.length > 0 && (
+                <div className="mt-4 mb-6">
+                  <div className="grid grid-cols-3 gap-4">
+                    {previewUrls.map((url, index) => (
+                      <div key={index} className="relative aspect-square">
+                        <img
+                          src={url || "/placeholder.svg"}
+                          alt={`Preview ${index}`}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRemoveImage(index);
+                          }}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-sm w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition duration-300 ease-in-out"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Deskripsi */}
               <div className="mb-6">
@@ -556,6 +683,7 @@ export default function ProductModal({
                 </button>
                 <button
                   type="submit"
+                  onClick={handleSubmit}
                   className="px-4 py-2 text-white rounded-lg gradient-button-blue"
                 >
                   Simpan Perubahan
@@ -566,240 +694,273 @@ export default function ProductModal({
         </div>
       ) : (
         // Tampilan untuk Add
-        <div className="modal-scrollable" onClick={(e) => e.stopPropagation()}>
-          <div className="w-full p-6">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <h2 className="text-xl font-bold">Tambah Produk Baru</h2>
-              <button
-                onClick={onRequestClose}
-                className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Tutup modal"
+        <div className="w-full p-10">
+          <div className="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 className="text-xl font-bold">Tambah Produk Baru</h2>
+            <button
+              onClick={onRequestClose}
+              className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Tutup modal"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-gray-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              {/* Product ID dan Tanggal */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Produk ID
-                  </label>
-                  <input
-                    type="text"
-                    value={productId}
-                    readOnly
-                    className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Tanggal
-                  </label>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Nama Produk dan Durasi */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Nama Produk
-                  </label>
-                  <input
-                    type="text"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Durasi (Jam)
-                  </label>
-                  <input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Ketersediaan dan Kategori */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Ketersediaan
-                  </label>
-                  <select
-                    value={availability}
-                    onChange={(e) => setAvailability(e.target.value)}
-                    className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
-                    style={{
-                      backgroundImage:
-                        "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                    }}
-                  >
-                    <option value="Tersedia">Tersedia</option>
-                    <option value="Habis">Habis</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Kategori
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
-                    style={{
-                      backgroundImage:
-                        "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                    }}
-                  >
-                    <option value="Tour">Tour</option>
-                    <option value="Activity">Activity</option>
-                    <option value="Attraction">Attraction</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Rating dan Harga */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Rating
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    value={rating}
-                    onChange={(e) => setRating(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Harga (Rp)
-                  </label>
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Upload Gambar */}
-              <div className="mb-4">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <form onSubmit={handleSubmit}>
+            {/* Product ID dan Tanggal */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
                 <label className="block text-sm font-medium mb-2">
-                  Upload Gambar
+                  Produk ID
                 </label>
-                <div
-                  className="mt-1 flex justify-center px-6 pt-5 pb-6 border border-gray-300 border-dashed rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                >
-                  <label className="cursor-pointer w-full h-full">
-                    <div className="space-y-1 text-center">
-                      {previewUrl ? (
-                        <img
-                          src={previewUrl || '/placeholder.svg'}
-                          alt="Preview"
-                          className="mx-auto h-32 w-32 object-cover rounded-lg"
-                        />
-                      ) : (
-                        <>
-                          <svg
-                            className="mx-auto h-12 w-12 text-gray-400"
-                            stroke="currentColor"
-                            fill="none"
-                            viewBox="0 0 48 48"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                              strokeWidth="2"
-                            />
-                          </svg>
-                          <div className="flex text-sm text-gray-600 justify-center">
-                            <span className="text-blue-600 hover:text-blue-500">
-                              Klik untuk upload
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG maksimal 5MB
-                          </p>
-                        </>
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      className="sr-only"
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* Deskripsi */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">
-                  Deskripsi
-                </label>
-                <textarea
-                  value={description}
-                  onChange={handleDescriptionChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  rows="3"
+                <input
+                  type="text"
+                  value={productId}
+                  readOnly
+                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                 />
               </div>
-
-              {/* Tombol Aksi */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <button
-                  type="button"
-                  onClick={onRequestClose}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className={`px-4 py-2 text-white rounded-lg ${
-                    mode === 'add'
-                      ? 'gradient-button-green'
-                      : 'gradient-button-blue'
-                  }`}
-                >
-                  {mode === 'add' ? 'Buat Produk' : 'Simpan Perubahan'}
-                </button>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Tanggal
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
-            </form>
-          </div>
+            </div>
+
+            {/* Nama Produk dan Durasi */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Nama Produk
+                </label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Durasi (Jam)
+                </label>
+                <input
+                  type="number"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Ketersediaan dan Kategori */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Ketersediaan
+                </label>
+                <select
+                  value={availability}
+                  onChange={(e) => setAvailability(e.target.value)}
+                  className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
+                  style={{
+                    backgroundImage:
+                      "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                  }}
+                >
+                  <option value="Tersedia">Tersedia</option>
+                  <option value="Habis">Habis</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Kategori
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
+                  style={{
+                    backgroundImage:
+                      "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                  }}
+                >
+                  <option value="Tour">Tour</option>
+                  <option value="Activity">Activity</option>
+                  <option value="Attraction">Attraction</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Rating dan Harga */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Rating</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="5"
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Harga (Rp)
+                </label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Upload Gambar */}
+            <div className="mb-6 w-full">
+              <label className="block text-sm font-medium mb-2">
+                Upload Gambar
+              </label>
+              <div
+                className="w-full border-2 border-dashed border-gray-300 rounded-lg py-12 text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+              >
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  multiple
+                  onChange={(e) => handleFiles(Array.from(e.target.files))}
+                  className="hidden"
+                  id="fileInput"
+                />
+                <label htmlFor="fileInput" className="cursor-pointer">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <p className="mt-1 text-sm text-gray-600">
+                    <span className="font-medium text-blue-600 hover:text-blue-500">
+                      Klik untuk upload
+                    </span>{" "}
+                    atau drag and drop
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    PNG, JPG up to 5MB
+                  </p>
+                </label>
+              </div>
+              {selectedFilesCount > 0 && (
+                <p className="mt-2 text-sm text-gray-600">
+                  {selectedFilesCount} file{selectedFilesCount > 1 ? "s" : ""}{" "}
+                  dipilih
+                </p>
+              )}
+            </div>
+
+            {/* Preview Gambar */}
+            {previewUrls.length > 0 && (
+              <div className="mt-4 mb-6">
+                <div className="grid grid-cols-3 gap-4">
+                  {previewUrls.map((url, index) => (
+                    <div key={index} className="relative aspect-square">
+                      <img
+                        src={url || "/placeholder.svg"}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveImage(index);
+                        }}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-sm w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition duration-300 ease-in-out"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Deskripsi */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">
+                Deskripsi
+              </label>
+              <textarea
+                value={description}
+                onChange={handleDescriptionChange}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                rows="3"
+              />
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                onClick={onRequestClose}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className={`px-4 py-2 text-white rounded-lg gradient-button-green`}
+              >
+                Buat Produk
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </Modal>
