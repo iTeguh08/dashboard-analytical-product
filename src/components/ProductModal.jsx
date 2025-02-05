@@ -109,17 +109,21 @@ export default function ProductModal({
       setRating(product.rating);
       setPrice(product.harga);
       setDescription(product.deskripsi || "");
-      setImageUrl(product.gambar); // Kembalikan ini
-      setFiles([]); // Reset files
       setProductId(product.id || "");
       setDuration(product.durasi || "");
 
       // Memuat gambar yang sudah ada ke previewUrls
       if (product.gambar) {
-        setPreviewUrls([product.gambar]); // Kembalikan ini ke array dengan satu item
+        if (Array.isArray(product.gambar)) {
+          setPreviewUrls(product.gambar); // Jika gambar disimpan sebagai array
+        } else {
+          setPreviewUrls([product.gambar]); // Jika gambar disimpan sebagai single URL
+        }
       } else {
-        setPreviewUrls([]);
+        setPreviewUrls([]); // Reset previewUrls jika tidak ada gambar
       }
+
+      setFiles([]); // Reset files
     } else {
       resetForm();
     }
@@ -133,13 +137,11 @@ export default function ProductModal({
     setRating(0);
     setPrice(0);
     setDescription("");
-    setFiles([]); // Reset ke array kosong
+    setFiles([]); // Reset files
     setImageUrl("");
-    setPreviewUrls([]); // Reset ke array kosong
+    setPreviewUrls([]); // Reset previewUrls
     setProductId("");
     setDuration("");
-    setSelectedFilesCount(0); // Reset selectedFilesCount
-    setFile(null); // Reset file
   };
 
   const handleDragEnter = (e) => {
@@ -156,14 +158,13 @@ export default function ProductModal({
     if (selectedFiles.length === 0) return;
 
     const newFiles = [...files, ...selectedFiles];
-    setFiles(newFiles);
-
     const newPreviewUrls = [
       ...previewUrls,
-      ...selectedFiles.map((file) => URL.createObjectURL(file)),
+      ...Array.from(selectedFiles).map((file) => URL.createObjectURL(file)),
     ];
-    setPreviewUrls(newPreviewUrls);
-    setSelectedFilesCount(newFiles.length);
+
+    setFiles(newFiles);
+    setPreviewUrls(newPreviewUrls); // Memperbarui previewUrls
   };
 
   const handleDrop = (e) => {
@@ -215,7 +216,7 @@ export default function ProductModal({
       rating: Number.parseFloat(rating),
       harga: Number.parseFloat(price),
       deskripsi: description,
-      gambar: files.length > 0 ? files[0] : imageUrl, // Kembalikan logika ini
+      gambar: previewUrls, // Kirim semua URL gambar yang ada
       durasi: duration,
     };
 
@@ -571,7 +572,8 @@ export default function ProductModal({
                   Upload Gambar
                 </label>
                 <div
-                  className="w-full border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                  className="w-full h-[220px] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                  onClick={() => document.getElementById("fileInput").click()}
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
                   onDragEnter={handleDragEnter}
@@ -611,11 +613,12 @@ export default function ProductModal({
                     </p>
                   </label>
                 </div>
-                {selectedFilesCount > 0 && (
-                  <p className="mt-2 text-sm text-gray-600">
-                    {selectedFilesCount} file{selectedFilesCount > 1 ? "s" : ""}{" "}
+                {/* Informasi File yang Dipilih */}
+                {previewUrls.length > 0 && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    {previewUrls.length} file{previewUrls.length > 1 ? "s" : ""}{" "}
                     dipilih
-                  </p>
+                  </div>
                 )}
               </div>
 
@@ -843,7 +846,8 @@ export default function ProductModal({
                 Upload Gambar
               </label>
               <div
-                className="w-full border-2 border-dashed border-gray-300 rounded-lg py-12 text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                className="w-full h-[220px] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
+                onClick={() => document.getElementById("fileInput").click()}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragEnter={handleDragEnter}
