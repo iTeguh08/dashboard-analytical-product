@@ -91,6 +91,7 @@ export default function ProductModal({
   const [duration, setDuration] = useState("");
   const [selectedFilesCount, setSelectedFilesCount] = useState(0); // Tambahkan state baru
   const [file, setFile] = useState(null); // Declare setFile
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Generate Product ID untuk mode tambah
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function ProductModal({
       setProductId(product.id || "");
       setDuration(product.durasi || "");
 
-      // Memuat gambar yang sudah ada ke previewUrls
+      // Memastikan previewUrls selalu berupa array
       if (product.gambar) {
         if (Array.isArray(product.gambar)) {
           setPreviewUrls(product.gambar); // Jika gambar disimpan sebagai array
@@ -228,6 +229,18 @@ export default function ProductModal({
     onRequestClose();
   };
 
+  const handleNext = () => {
+    setActiveImageIndex((prevIndex) =>
+      prevIndex === previewUrls.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handlePrev = () => {
+    setActiveImageIndex((prevIndex) =>
+      prevIndex === 0 ? previewUrls.length - 1 : prevIndex - 1
+    );
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -286,14 +299,62 @@ export default function ProductModal({
       ) : mode === "view" ? (
         // Tampilan khusus View
         <div className="flex flex-col md:flex-row" style={{ border: "none" }}>
-          {/* Bagian Gambar */}
-          <div className="w-full md:w-2/5 p-4 flex items-center justify-center">
-            <img
-              src={imageUrl || "/placeholder.svg"}
-              alt={productName}
-              className="object-cover w-full h-64 md:h-full rounded-lg shadow-md"
-            />
-          </div>
+          {previewUrls.length > 0 ? (
+            <div className="relative w-full md:w-2/5 p-4 flex items-center justify-center">
+              {/* Gambar */}
+              <img
+                src={previewUrls[activeImageIndex] || "/placeholder.svg"}
+                alt={`Preview ${activeImageIndex}`}
+                className="w-full h-[300px] object-cover rounded-lg shadow-md"
+              />
+
+              {/* Navigation Buttons */}
+              {previewUrls.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrev}
+                    className="absolute top-1/2 left-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3 w-3 text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="absolute top-1/2 right-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3 w-3 text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <p>Tidak ada gambar tersedia.</p>
+          )}
 
           {/* Bagian Detail */}
           <div className="w-full md:w-3/5 p-6 pl-2 overflow-y-auto">
@@ -631,7 +692,7 @@ export default function ProductModal({
                         <img
                           src={url || "/placeholder.svg"}
                           alt={`Preview ${index}`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-[150px] object-cover rounded-lg"
                         />
                         <button
                           onClick={(e) => {
@@ -904,7 +965,7 @@ export default function ProductModal({
                       <img
                         src={url || "/placeholder.svg"}
                         alt={`Preview ${index}`}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-[150px] object-cover rounded-lg"
                       />
                       <button
                         onClick={(e) => {
