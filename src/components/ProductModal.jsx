@@ -86,11 +86,9 @@ export default function ProductModal({
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]); // Menyimpan file-file yang diupload
   const [previewUrls, setPreviewUrls] = useState([]); // Menyimpan URL preview gambar
-  const [imageUrl, setImageUrl] = useState("");
   const [productId, setProductId] = useState("");
   const [duration, setDuration] = useState("");
   const [selectedFilesCount, setSelectedFilesCount] = useState(0); // Tambahkan state baru
-  const [file, setFile] = useState(null); // Declare setFile
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Generate Product ID untuk mode tambah
@@ -101,8 +99,9 @@ export default function ProductModal({
   }, [mode]);
 
   useEffect(() => {
-    if (mode === "edit" || mode === "view") {
-      // Memuat data produk ke state
+    if (mode === "add") {
+      setProductId(`PROD-${Math.floor(1000 + Math.random() * 9000)}`);
+    } else if (mode === "edit" || mode === "view") {
       setProductName(product.nama);
       setAvailability(product.ketersediaan);
       setCategory(product.kategori);
@@ -112,19 +111,14 @@ export default function ProductModal({
       setDescription(product.deskripsi || "");
       setProductId(product.id || "");
       setDuration(product.durasi || "");
-
-      // Memastikan previewUrls selalu berupa array
+  
       if (product.gambar) {
-        if (Array.isArray(product.gambar)) {
-          setPreviewUrls(product.gambar); // Jika gambar disimpan sebagai array
-        } else {
-          setPreviewUrls([product.gambar]); // Jika gambar disimpan sebagai single URL
-        }
+        setPreviewUrls(Array.isArray(product.gambar) ? product.gambar : [product.gambar]);
       } else {
-        setPreviewUrls([]); // Reset previewUrls jika tidak ada gambar
+        setPreviewUrls([]);
       }
-
-      setFiles([]); // Reset files
+  
+      setFiles([]);
     } else {
       resetForm();
     }
@@ -157,15 +151,16 @@ export default function ProductModal({
 
   const handleFiles = (selectedFiles) => {
     if (selectedFiles.length === 0) return;
-
+  
     const newFiles = [...files, ...selectedFiles];
     const newPreviewUrls = [
       ...previewUrls,
       ...Array.from(selectedFiles).map((file) => URL.createObjectURL(file)),
     ];
-
+  
     setFiles(newFiles);
-    setPreviewUrls(newPreviewUrls); // Memperbarui previewUrls
+    setPreviewUrls(newPreviewUrls);
+    setSelectedFilesCount(newFiles.length);
   };
 
   const handleDrop = (e) => {
@@ -173,11 +168,6 @@ export default function ProductModal({
     e.stopPropagation();
     const droppedFiles = Array.from(e.dataTransfer.files);
     handleFiles(droppedFiles);
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    handleFiles(selectedFiles);
   };
 
   const handleDragOver = (e) => {
@@ -193,21 +183,13 @@ export default function ProductModal({
     setSelectedFilesCount(newFiles.length);
   };
 
-  const handleImageUrlChange = (e) => {
-    const url = e.target.value;
-    setImageUrl(url);
-    setPreviewUrls(url);
-    setFile(null);
-  };
-
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Membuat objek produk baru
+  
     const newProduct = {
       id: productId,
       nama: productName,
@@ -217,28 +199,24 @@ export default function ProductModal({
       rating: Number.parseFloat(rating),
       harga: Number.parseFloat(price),
       deskripsi: description,
-      gambar: previewUrls, // Kirim semua URL gambar yang ada
+      gambar: previewUrls,
       durasi: duration,
     };
-
-    // Panggil onSubmit dengan data produk
+  
     onSubmit(newProduct);
-
-    // Reset form dan tutup modal
+  
     resetForm();
     onRequestClose();
   };
 
-  const handleNext = () => {
-    setActiveImageIndex((prevIndex) =>
-      prevIndex === previewUrls.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  const handlePrev = () => {
-    setActiveImageIndex((prevIndex) =>
-      prevIndex === 0 ? previewUrls.length - 1 : prevIndex - 1
-    );
+  const handleImageNavigation = (direction) => {
+    setActiveImageIndex((prevIndex) => {
+      if (direction === "next") {
+        return prevIndex === previewUrls.length - 1 ? 0 : prevIndex + 1;
+      } else {
+        return prevIndex === 0 ? previewUrls.length - 1 : prevIndex - 1;
+      }
+    });
   };
 
   return (
@@ -312,7 +290,7 @@ export default function ProductModal({
               {previewUrls.length > 1 && (
                 <>
                   <button
-                    onClick={handlePrev}
+                    onClick={handleImageNavigation}
                     className="absolute top-1/2 left-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
                   >
                     <svg
@@ -331,7 +309,7 @@ export default function ProductModal({
                     </svg>
                   </button>
                   <button
-                    onClick={handleNext}
+                    onClick={handleImageNavigation}
                     className="absolute top-1/2 right-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
                   >
                     <svg
@@ -634,7 +612,10 @@ export default function ProductModal({
                 </label>
                 <div
                   className="w-full h-[220px] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
-                  onClick={() => document.getElementById("fileInput").click()}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Cegah event bubbling
+                    document.getElementById("fileInput").click();
+                  }}
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
                   onDragEnter={handleDragEnter}
@@ -908,7 +889,10 @@ export default function ProductModal({
               </label>
               <div
                 className="w-full h-[220px] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50 transition duration-300 ease-in-out"
-                onClick={() => document.getElementById("fileInput").click()}
+                onClick={(e) => {
+                  e.stopPropagation(); // Cegah event bubbling
+                  document.getElementById("fileInput").click();
+                }}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragEnter={handleDragEnter}

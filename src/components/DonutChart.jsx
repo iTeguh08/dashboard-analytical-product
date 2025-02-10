@@ -55,8 +55,8 @@ export default function DonutChart() {
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius="49%" // Diperbesar dari 50%
-              outerRadius="77%" // Diperbesar dari 80%
+              innerRadius="42%" // Diperbesar dari 50%
+              outerRadius="70.5%" // Diperbesar dari 80%
               fill="#8884d8"
               paddingAngle={2}
               dataKey="value"

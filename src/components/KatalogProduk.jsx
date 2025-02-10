@@ -368,7 +368,6 @@ export default function KatalogProduk() {
                   {/* Spacer untuk alignment */}
                 </div>
               </th>
-
               {/* Perbaikan 2: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
@@ -410,7 +409,6 @@ export default function KatalogProduk() {
                   </div>
                 </div>
               </th>
-
               {/* Perbaikan 3: Ganti min-w-[120px] dengan min-w-[15%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer relative"
@@ -434,7 +432,6 @@ export default function KatalogProduk() {
                   </span>
                   <FaChevronDown className="text-xs text-gray-400" />
                 </div>
-
                 {/* Dropdown Filter */}
                 {isCategoryDropdownOpen && (
                   <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
@@ -465,7 +462,6 @@ export default function KatalogProduk() {
                   </div>
                 )}
               </th>
-
               {/* Perbaikan 4: Ganti min-w-[150px] dengan min-w-[15%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
@@ -487,7 +483,6 @@ export default function KatalogProduk() {
                   {getSortIcon("tanggal")}
                 </div>
               </th>
-
               {/* Perbaikan 5: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th
                 className="py-3 w-[11%] min-w-[110px] cursor-pointer"
@@ -509,7 +504,6 @@ export default function KatalogProduk() {
                   {getSortIcon("rating")}
                 </div>
               </th>
-
               {/* Perbaikan 6: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th
                 className="py-3 w-[14%] min-w-[140px] cursor-pointer"
@@ -531,7 +525,6 @@ export default function KatalogProduk() {
                   {getSortIcon("harga")}
                 </div>
               </th>
-
               {/* Perbaikan 7: Ganti min-w-[120px] dengan min-w-[10%] */}
               <th className="py-3 w-[6%] min-w-[60px]">Aksi</th>
             </tr>

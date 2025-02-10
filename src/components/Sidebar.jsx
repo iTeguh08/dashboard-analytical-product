@@ -82,7 +82,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex justify-center items-center gap-2 mt-2 mb-11">
         <img
-          src="https://iteguh08.github.io/TeguhProject/SMK-TI-BALI-GLOBAL-SINGARAJA-993.png"
+          src="src/assets/SMK-TI-BALI-GLOBAL993.png"
           alt="Logo"
           className="w-10 h-[50px]"
         />
