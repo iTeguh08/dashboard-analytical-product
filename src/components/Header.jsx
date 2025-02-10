@@ -1,24 +1,28 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Header({ year, setYear }) {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Tentukan apakah breadcrumb harus ditampilkan
-  const showBreadcrumb = location.pathname === '/katalog-produk';
+  const showBreadcrumb =
+    location.pathname === "/katalog-produk" ||
+    location.pathname === "/order-management";
 
   // Tentukan apakah dropdown tahun harus ditampilkan
-  const showYearDropdown = location.pathname !== '/katalog-produk';
+  const showYearDropdown =
+    location.pathname !== "/katalog-produk" &&
+    location.pathname !== "/order-management";
 
   // Fungsi untuk menangani klik pada breadcrumb Dashboard
   const handleDashboardClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <header className="flex justify-between items-center mb-6">
-      {/* Tampilkan breadcrumb jika di halaman Katalog Produk, jika tidak tampilkan greetings */}
+      {/* Tampilkan breadcrumb jika di halaman Katalog Produk atau Order Management */}
       {showBreadcrumb ? (
         <div className="text-lg text-gray-600">
           <Link
@@ -26,15 +30,19 @@ export default function Header({ year, setYear }) {
             onClick={handleDashboardClick}
             className="text-gray-400 hover:text-gray-600"
           >
-            Dashboard
-          </Link>{' '}
-          &gt; <span className="font-semibold">Katalog Produk</span>
+            Dashboard >
+          </Link>{" "}
+          <span className="font-semibold">
+            {location.pathname === "/katalog-produk"
+              ? "Katalog Produk"
+              : "Order Management"}
+          </span>
         </div>
       ) : (
         <h1 className="text-2xl font-bold">Good morning Lorem ipsum</h1>
       )}
 
-      {/* Dropdown Tahun (hanya ditampilkan jika bukan di halaman Katalog Produk) */}
+      {/* Dropdown Tahun (hanya ditampilkan jika bukan di halaman Katalog Produk atau Order Management) */}
       {showYearDropdown && (
         <select
           value={year}

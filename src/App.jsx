@@ -1,28 +1,29 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
   useLocation,
-} from 'react-router-dom';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import MetricCard from './components/MetricCard';
-import SalesCard from './components/SalesCard';
-import ProductTable from './components/ProductTable';
-import SalesChart from './components/SalesChart';
-import DonutChart from './components/DonutChart';
-import KatalogProduk from './components/KatalogProduk'; // Import komponen KatalogProduk
-import './index.css';
+} from "react-router-dom";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import MetricCard from "./components/MetricCard";
+import SalesCard from "./components/SalesCard";
+import ProductTable from "./components/ProductTable";
+import SalesChart from "./components/SalesChart";
+import DonutChart from "./components/DonutChart";
+import KatalogProduk from "./components/KatalogProduk"; // Import komponen KatalogProduk
+import OrderManagement from "./components/OrderManagement"; // Import komponen OrderManagement
+import "./index.css";
 
 export default function App() {
-  const [activeProduct, setActiveProduct] = useState('Tour');
+  const [activeProduct, setActiveProduct] = useState("Tour");
 
   const metrics = [
-    { title: 'Tour', value: '78' },
-    { title: 'Activity', value: '87' },
-    { title: 'Attraction', value: '98' },
+    { title: "Tour", value: "78" },
+    { title: "Activity", value: "87" },
+    { title: "Attraction", value: "98" },
   ];
 
   return (
@@ -71,6 +72,7 @@ export default function App() {
 
               {/* Route untuk Katalog Produk */}
               <Route path="/katalog-produk" element={<KatalogProduk />} />
+              <Route path="/order-management" element={<OrderManagement />} />
             </Routes>
           </div>
         </div>
@@ -87,8 +89,11 @@ function RightSection() {
   const location = useLocation(); // Ambil path saat ini
 
   // Tampilkan SalesCard dan DonutChart hanya jika path bukan '/katalog-produk'
-  if (location.pathname === '/katalog-produk') {
-    return null; // Jangan tampilkan apa pun di halaman Katalog Produk
+  if (
+    location.pathname === "/katalog-produk" ||
+    location.pathname === "/order-management"
+  ) {
+    return null;
   }
 
   return (

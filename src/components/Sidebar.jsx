@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 // Komponen SVG untuk ikon Dashboard
 const DashboardIcon = () => (
@@ -64,16 +64,16 @@ const LogoutIcon = () => (
 
 export default function Sidebar() {
   const location = useLocation();
-  const [activeMenu, setActiveMenu] = useState('Dashboard');
+  const [activeMenu, setActiveMenu] = useState("Dashboard");
 
   // Update active menu berdasarkan path saat ini
   useEffect(() => {
-    if (location.pathname === '/') {
-      setActiveMenu('Dashboard');
-    } else if (location.pathname === '/katalog-produk') {
-      setActiveMenu('Katalog Produk');
-    } else if (location.pathname === '/order-management') {
-      setActiveMenu('Order Management');
+    if (location.pathname === "/") {
+      setActiveMenu("Dashboard");
+    } else if (location.pathname === "/katalog-produk") {
+      setActiveMenu("Katalog Produk");
+    } else if (location.pathname === "/order-management") {
+      setActiveMenu("Order Management");
     }
   }, [location.pathname]);
 
@@ -106,17 +106,17 @@ export default function Sidebar() {
         <Link
           to="/"
           className={`w-full flex items-center gap-2 px-4 py-2 text-left rounded-lg transition-colors h-12 ${
-            activeMenu === 'Dashboard'
-              ? 'text-white'
-              : 'text-gray-600 hover:bg-gray-100'
+            activeMenu === "Dashboard"
+              ? "text-white"
+              : "text-gray-600 hover:bg-gray-100"
           }`}
           style={{
             background:
-              activeMenu === 'Dashboard'
-                ? 'linear-gradient(to bottom, #000000, #474242)'
-                : 'transparent',
+              activeMenu === "Dashboard"
+                ? "linear-gradient(to bottom, #000000, #474242)"
+                : "transparent",
           }}
-          onClick={() => setActiveMenu('Dashboard')}
+          onClick={() => setActiveMenu("Dashboard")}
         >
           <DashboardIcon />
           <span className="text-sm">Dashboard</span>
@@ -124,17 +124,17 @@ export default function Sidebar() {
         <Link
           to="/katalog-produk"
           className={`w-full flex items-center gap-2 px-4 py-2 text-left rounded-lg transition-colors h-12 ${
-            activeMenu === 'Katalog Produk'
-              ? 'text-white'
-              : 'text-gray-600 hover:bg-gray-100'
+            activeMenu === "Katalog Produk"
+              ? "text-white"
+              : "text-gray-600 hover:bg-gray-100"
           }`}
           style={{
             background:
-              activeMenu === 'Katalog Produk'
-                ? 'linear-gradient(to bottom, #000000, #474242)'
-                : 'transparent',
+              activeMenu === "Katalog Produk"
+                ? "linear-gradient(to bottom, #000000, #474242)"
+                : "transparent",
           }}
-          onClick={() => setActiveMenu('Katalog Produk')}
+          onClick={() => setActiveMenu("Katalog Produk")}
         >
           <CatalogIcon />
           <span className="text-sm">Katalog Produk</span>
@@ -142,17 +142,17 @@ export default function Sidebar() {
         <Link
           to="/order-management"
           className={`w-full flex items-center gap-2 px-4 py-2 text-left rounded-lg transition-colors h-12 ${
-            activeMenu === 'Order Management'
-              ? 'text-white'
-              : 'text-gray-600 hover:bg-gray-100'
+            activeMenu === "Order Management"
+              ? "text-white"
+              : "text-gray-600 hover:bg-gray-100"
           }`}
           style={{
             background:
-              activeMenu === 'Order Management'
-                ? 'linear-gradient(to bottom, #000000, #474242)'
-                : 'transparent',
+              activeMenu === "Order Management"
+                ? "linear-gradient(to bottom, #000000, #474242)"
+                : "transparent",
           }}
-          onClick={() => setActiveMenu('Order Management')}
+          onClick={() => setActiveMenu("Order Management")}
         >
           <OrderManagementIcon />
           <span className="text-sm">Order Management</span>

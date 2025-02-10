@@ -90,6 +90,7 @@ export default function ProductModal({
   const [duration, setDuration] = useState("");
   const [selectedFilesCount, setSelectedFilesCount] = useState(0); // Tambahkan state baru
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [imageUrl, setImageUrl] = useState(""); // Tambahkan state ini
 
   // Generate Product ID untuk mode tambah
   useEffect(() => {
@@ -111,13 +112,15 @@ export default function ProductModal({
       setDescription(product.deskripsi || "");
       setProductId(product.id || "");
       setDuration(product.durasi || "");
-  
+
       if (product.gambar) {
-        setPreviewUrls(Array.isArray(product.gambar) ? product.gambar : [product.gambar]);
+        setPreviewUrls(
+          Array.isArray(product.gambar) ? product.gambar : [product.gambar]
+        );
       } else {
         setPreviewUrls([]);
       }
-  
+
       setFiles([]);
     } else {
       resetForm();
@@ -133,7 +136,7 @@ export default function ProductModal({
     setPrice(0);
     setDescription("");
     setFiles([]); // Reset files
-    setImageUrl("");
+    setImageUrl(""); // Reset imageUrl
     setPreviewUrls([]); // Reset previewUrls
     setProductId("");
     setDuration("");
@@ -151,13 +154,13 @@ export default function ProductModal({
 
   const handleFiles = (selectedFiles) => {
     if (selectedFiles.length === 0) return;
-  
+
     const newFiles = [...files, ...selectedFiles];
     const newPreviewUrls = [
       ...previewUrls,
       ...Array.from(selectedFiles).map((file) => URL.createObjectURL(file)),
     ];
-  
+
     setFiles(newFiles);
     setPreviewUrls(newPreviewUrls);
     setSelectedFilesCount(newFiles.length);
@@ -189,7 +192,7 @@ export default function ProductModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const newProduct = {
       id: productId,
       nama: productName,
@@ -202,9 +205,9 @@ export default function ProductModal({
       gambar: previewUrls,
       durasi: duration,
     };
-  
+
     onSubmit(newProduct);
-  
+
     resetForm();
     onRequestClose();
   };
