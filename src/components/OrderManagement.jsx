@@ -8,13 +8,14 @@ import {
   FaList,
 } from "react-icons/fa";
 import { FiArrowUp, FiArrowDown } from "react-icons/fi";
+import OrderModal from "./OrderModal";
 
 export default function OrderManagement() {
   const [sortConfig, setSortConfig] = useState({
     key: "tanggal",
     direction: "desc",
   });
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
 
   // Dummy Data
   const initialOrders = [
@@ -77,6 +78,60 @@ export default function OrderManagement() {
 
   const [orders, setOrders] = useState(initialOrders);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
+  const [selectedProduct, setSelectedProduct] = useState(null); // Produk yang dipilih (untuk edit/view)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
+  const openModal = (mode, product = null) => {
+    setModalMode(mode);
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+
+    // Tutup dropdown kategori dan nonaktifkan underline
+    setIsProductDropdownOpen(false);
+    // setSortConfig({ key: null, direction: 'asc' }); // Reset underline
+  };
+
+  // Fungsi untuk menutup modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null); // Reset selectedProduct saat modal ditutup
+  };
+
+  // Fungsi untuk menambahkan produk baru
+  const handleAddProduct = (newProduct) => {
+    setOrders((prevOrders) => [
+      ...prevOrders,
+      { ...newProduct, id: Date.now() },
+    ]);
+  };
+
+  // Fungsi untuk mengupdate produk
+  const handleUpdateProduct = (updatedProduct) => {
+    const updatedOrders = orders.map((product) =>
+      product.id === selectedProduct.id ? updatedProduct : product
+    );
+    setOrders(updatedOrders);
+  };
+
+  // Fungsi untuk menghapus produk
+  const handleDeleteOrder = (order) => {
+    setProductToDelete(order);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (productToDelete) {
+      const updatedOrders = orders.filter(
+        (order) => order.id !== productToDelete.id
+      );
+      setOrders(updatedOrders); // Perbaiki nama fungsi
+      setIsDeleteModalOpen(false);
+      setProductToDelete(null);
+    }
+  };
 
   // Sorting logic
   const sortData = (key) => {
@@ -101,6 +156,25 @@ export default function OrderManagement() {
     setOrders(sorted);
   };
 
+  // Fungsi untuk mendapatkan ikon panah berdasarkan arah pengurutan
+  const getSortIcon = (key) => {
+    if (sortConfig.key === key) {
+      // Saat kolom aktif, gunakan panah biasa (↑ atau ↓)
+      return sortConfig.direction === "asc" ? (
+        <FiArrowUp /> // Panah ke atas untuk ascending
+      ) : (
+        <FiArrowDown /> // Panah ke bawah untuk descending
+      );
+    }
+    // Saat kolom tidak aktif, gunakan chevron ganda (siku)
+    return (
+      <div className="flex flex-col items-center gap-0 text-gray-400">
+        <FaChevronUp className="text-xs" />
+        <FaChevronDown className="text-xs -mt-1" />
+      </div>
+    );
+  };
+
   // Underline styling
   const getActiveUnderline = (key) => {
     if (sortConfig.key === key) {
@@ -115,6 +189,21 @@ export default function OrderManagement() {
     }
     return null;
   };
+
+  const filteredOrders = orders.filter((order) => {
+    if (!order.customer) return false; // Skip jika customer tidak ada
+    const nameMatch = order.customer
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return nameMatch;
+  });
+
+  useEffect(() => {
+    if (sortConfig.key !== "productName") {
+      setSelectedProduct(null); // Reset produk yang dipilih
+      setIsProductDropdownOpen(false);
+    }
+  }, [sortConfig.key]);
 
   return (
     <div className="bg-white rounded-lg p-6">
@@ -135,6 +224,7 @@ export default function OrderManagement() {
 
           {/* Tombol Order Baru */}
           <button
+          onClick={() => openModal("add")}
             className="px-4 py-2 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
             style={{
               background: "linear-gradient(to bottom, #4CAF50, #00CA08)",
@@ -154,49 +244,18 @@ export default function OrderManagement() {
               <th className="py-3 w-[15%] min-w-[170px]">Customer</th>
               <th className="py-3 w-[15%] min-w-[170px]">Email</th>
               <th className="py-3 w-[10%] min-w-[100px]">Order ID</th>
+              <th className="py-3 w-[10%] min-w-[100px]">Produk</th>
               {/* Kolom Produk dengan Underline */}
-              <th className="py-3 w-[15%] min-w-[150px] relative">
-                <div className="flex items-center">
-                  <span className="relative">Produk</span>
-                </div>
-              </th>
-              {/* Kolom Status dengan Underline */}
               <th
-                className="py-3 w-[10%] min-w-[120px] cursor-pointer relative"
+                className="py-3 w-[9%] min-w-[150px] relative"
                 onClick={() => {
-                  const newStatus =
-                    selectedStatus === "all"
-                      ? "Sukses"
-                      : selectedStatus === "Sukses"
-                      ? "Batal"
-                      : selectedStatus === "Batal"
-                      ? "Diproses"
-                      : "all";
-                  setSelectedStatus(newStatus);
-                  setSortConfig({ key: "status", direction: "asc" }); // Aktifkan underline
+                  setIsProductDropdownOpen(!isProductDropdownOpen);
+                  setSortConfig({ key: "kategori", direction: "asc" }); // Aktifkan underline
                 }}
-              >
-                <div className="flex items-center">
-                  <span className="relative mr-2">
-                    Status
-                    {getActiveUnderline("status")}
-                  </span>
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      selectedStatus === "Sukses"
-                        ? "bg-green-500"
-                        : selectedStatus === "Batal"
-                        ? "bg-red-500"
-                        : selectedStatus === "Diproses"
-                        ? "bg-yellow-500"
-                        : "bg-gray-300"
-                    }`}
-                  />
-                </div>
-              </th>
+              >Status</th>
               {/* Kolom Tanggal dengan Underline */}
               <th
-                className="py-3 w-[12%] min-w-[120px] cursor-pointer relative"
+                className="py-3 w-[10%] min-w-[120px] cursor-pointer relative"
                 onClick={() => sortData("tanggal")}
               >
                 <div className="flex items-center">
@@ -238,7 +297,7 @@ export default function OrderManagement() {
           </thead>
 
           <tbody>
-            {orders.map((order) => (
+            {filteredOrders.map((order) => (
               <tr
                 key={order.id}
                 className="border-b border-gray-200 hover:bg-gray-50"
@@ -283,23 +342,28 @@ export default function OrderManagement() {
           </tbody>
         </table>
       </div>
+      {/* Modal */}
+      {isModalOpen && (
+        <OrderModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          mode={modalMode}
+          product={selectedProduct}
+          onSubmit={
+            modalMode === "add" ? handleAddProduct : handleUpdateProduct
+          }
+        />
+      )}
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <OrderModal
+          isOpen={isDeleteModalOpen}
+          onRequestClose={() => setIsDeleteModalOpen(false)}
+          mode="delete"
+          product={productToDelete}
+          onSubmit={confirmDelete}
+        />
+      )}
     </div>
   );
-
-  // Fungsi untuk menampilkan icon sort
-  function getSortIcon(key) {
-    if (sortConfig.key === key) {
-      return sortConfig.direction === "asc" ? (
-        <FiArrowUp className="text-gray-400" />
-      ) : (
-        <FiArrowDown className="text-gray-400" />
-      );
-    }
-    return (
-      <div className="flex flex-col items-center gap-0 text-gray-400">
-        <FaChevronUp className="text-xs" />
-        <FaChevronDown className="text-xs -mt-1" />
-      </div>
-    );
-  }
 }
