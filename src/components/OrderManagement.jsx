@@ -80,13 +80,13 @@ export default function OrderManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
-  const [selectedProduct, setSelectedProduct] = useState(null); // Produk yang dipilih (untuk edit/view)
+  const [selectedOrder, setSelectedOrder] = useState(null); // Produk yang dipilih (untuk edit/view)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
-  const openModal = (mode, product = null) => {
+  const openModal = (mode, order = null) => {
     setModalMode(mode);
-    setSelectedProduct(product);
+    setSelectedOrder(order);
     setIsModalOpen(true);
 
     // Tutup dropdown kategori dan nonaktifkan underline
@@ -97,21 +97,21 @@ export default function OrderManagement() {
   // Fungsi untuk menutup modal
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedProduct(null); // Reset selectedProduct saat modal ditutup
+    setSelectedOrder(null); // Reset selectedProduct saat modal ditutup
   };
 
   // Fungsi untuk menambahkan produk baru
-  const handleAddProduct = (newProduct) => {
+  const handleAddOrder = (newOrder) => {
     setOrders((prevOrders) => [
       ...prevOrders,
-      { ...newProduct, id: Date.now() },
+      { ...newOrder, id: Date.now() },
     ]);
   };
 
   // Fungsi untuk mengupdate produk
-  const handleUpdateProduct = (updatedProduct) => {
-    const updatedOrders = orders.map((product) =>
-      product.id === selectedProduct.id ? updatedProduct : product
+  const handleUpdateOrder = (updatedOrder) => {
+    const updatedOrders = orders.map((order) =>
+      order.id === selectedOrder.id ? updatedOrder : order
     );
     setOrders(updatedOrders);
   };
@@ -123,13 +123,13 @@ export default function OrderManagement() {
   };
 
   const confirmDelete = () => {
-    if (productToDelete) {
+    if (orderToDelete) {
       const updatedOrders = orders.filter(
         (order) => order.id !== productToDelete.id
       );
       setOrders(updatedOrders); // Perbaiki nama fungsi
       setIsDeleteModalOpen(false);
-      setProductToDelete(null);
+      setOrderToDelete(null);
     }
   };
 
@@ -198,12 +198,12 @@ export default function OrderManagement() {
     return nameMatch;
   });
 
-  useEffect(() => {
-    if (sortConfig.key !== "productName") {
-      setSelectedProduct(null); // Reset produk yang dipilih
-      setIsProductDropdownOpen(false);
-    }
-  }, [sortConfig.key]);
+  // useEffect(() => {
+  //   if (sortConfig.key !== "productName") {
+  //     setSelectedProduct(null); // Reset produk yang dipilih
+  //     setIsProductDropdownOpen(false);
+  //   }
+  // }, [sortConfig.key]);
 
   return (
     <div className="bg-white rounded-lg p-6">
@@ -224,7 +224,7 @@ export default function OrderManagement() {
 
           {/* Tombol Order Baru */}
           <button
-          onClick={() => openModal("add")}
+            onClick={() => openModal("add")}
             className="px-4 py-2 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
             style={{
               background: "linear-gradient(to bottom, #4CAF50, #00CA08)",
@@ -252,7 +252,9 @@ export default function OrderManagement() {
                   setIsProductDropdownOpen(!isProductDropdownOpen);
                   setSortConfig({ key: "kategori", direction: "asc" }); // Aktifkan underline
                 }}
-              >Status</th>
+              >
+                Status
+              </th>
               {/* Kolom Tanggal dengan Underline */}
               <th
                 className="py-3 w-[10%] min-w-[120px] cursor-pointer relative"
@@ -308,13 +310,12 @@ export default function OrderManagement() {
                 <td className="py-4">{order.produk}</td>
                 <td className="py-4">
                   <span
-                    className={`px-2 py-1 rounded-full text-sm ${
-                      order.status === "Sukses"
-                        ? "bg-green-100 text-green-600"
-                        : order.status === "Batal"
+                    className={`px-2 py-1 rounded-full text-sm ${order.status === "Sukses"
+                      ? "bg-green-100 text-green-600"
+                      : order.status === "Batal"
                         ? "bg-red-100 text-red-600"
                         : "bg-yellow-100 text-yellow-600"
-                    }`}
+                      }`}
                   >
                     {order.status}
                   </span>
@@ -326,13 +327,22 @@ export default function OrderManagement() {
                 <td className="py-4">Rp{order.totalHarga.toLocaleString()}</td>
                 <td className="py-4">
                   <div className="flex gap-2">
-                    <button className="text-blue-500 hover:text-blue-700">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() => openModal("edit", order)}
+                    >
                       <FaEdit />
                     </button>
-                    <button className="text-green-500 hover:text-green-700">
+                    <button
+                      className="text-green-500 hover:text-green-700"
+                      onClick={() => openModal("view", order)}
+                    >
                       <FaList />
                     </button>
-                    <button className="text-red-500 hover:text-red-700">
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleDeleteOrder(order)}
+                    >
                       <FaTrashAlt />
                     </button>
                   </div>
@@ -348,9 +358,9 @@ export default function OrderManagement() {
           isOpen={isModalOpen}
           onRequestClose={closeModal}
           mode={modalMode}
-          product={selectedProduct}
+          order={selectedOrder}
           onSubmit={
-            modalMode === "add" ? handleAddProduct : handleUpdateProduct
+            modalMode === "add" ? handleAddOrder : handleUpdateOrder
           }
         />
       )}
@@ -360,7 +370,7 @@ export default function OrderManagement() {
           isOpen={isDeleteModalOpen}
           onRequestClose={() => setIsDeleteModalOpen(false)}
           mode="delete"
-          product={productToDelete}
+          order={orderToDelete}
           onSubmit={confirmDelete}
         />
       )}

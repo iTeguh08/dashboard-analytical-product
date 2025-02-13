@@ -79,39 +79,36 @@ export default function OrderModal({
 }) {
   const [custName, setCustName] = useState("");
   const [date, setDate] = useState("");
-  const [price, setPrice] = useState(0);
-  const [orderID, setProductId] = useState("");
+  const [price, setPrice] = useState(0); // Default value sebagai angka
+  const [orderID, setOrderId] = useState(""); // Ubah nama variabel agar lebih jelas
   const [email, setEmail] = useState("");
-  const [productName, setProductName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [status, setStatus] = useState("");
+  const [productName, setProductName] = useState(""); // Default value sebagai string
+  const [quantity, setQuantity] = useState(0); // Default value sebagai angka
+  const [status, setStatus] = useState(""); // Default value sebagai string
 
   useEffect(() => {
     if (mode === "add") {
-      setProductId(`ORD-${Math.floor(1000 + Math.random() * 8000)}`);
+      setOrderId(`ORD-${Math.floor(1000 + Math.random() * 8000)}`);
     } else if (mode === "edit" || mode === "view") {
-      if (order) {
-        setCustName(order.custName || "");
-        setEmail(order.email || "");
-        setProductName(order.productName || "");
-        setQuantity(order.quantity || 0);
-        setPrice(order.price || 0);
-        setStatus(order.price || ""); 
-      }
-    } else {
-      resetForm();
+      setCustName(order.customer || "");
+      setEmail(order.email || "");
+      setProductName(order.produk || "");
+      setQuantity(order.jumlah || 0);
+      setPrice(order.totalHarga || 0);
+      setStatus(order.status || "");
+      setDate(order.tanggal || "");
     }
   }, [mode, order]);
 
   const resetForm = () => {
-    setProductId("");
-    setDate("");
-    setcustName("");
-    setPrice(0);
+    setOrderId("");
+    setCustName("");
     setEmail("");
-    setProductName([]);
-    setQuantity("");
+    setProductName([]); // String, bukan array
+    setQuantity(0); // Angka, bukan string
+    setPrice(0); // Angka, bukan string
     setStatus("");
+    setDate("");
   };
 
   const handleSubmit = (e) => {
@@ -123,19 +120,18 @@ export default function OrderModal({
     }
     const newOrder = {
       id: orderID,
-      nama: custName,
-      tanggal: date,
-      harga: parsedPrice,
+      customer: custName, // Sesuaikan dengan nama properti di OrderManagement
       email: email,
-      productNama: productName,
+      produk: productName, // Gunakan 'produk' sesuai struktur data
       jumlah: quantity,
+      totalHarga: parsedPrice, // Gunakan 'totalHarga' sesuai struktur data
       status: status,
+      tanggal: date,
     };
-    onSubmit(newOrder);
+    onSubmit(newOrder); // Kirim data ke parent component
     resetForm();
     onRequestClose();
   };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -252,9 +248,7 @@ export default function OrderModal({
           {/* Bagian Detail */}
           <div className="w-full md:w-3/5 p-6 pl-2 overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-3xl font-bold text-gray-800">
-                {custName}
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-800">{custName}</h2>
               <button
                 onClick={onRequestClose}
                 className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -277,9 +271,7 @@ export default function OrderModal({
               </button>
             </div>
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-3xl font-bold text-gray-800">
-                {email}
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-800">{email}</h2>
               <button
                 onClick={onRequestClose}
                 className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -401,6 +393,30 @@ export default function OrderModal({
             </div>
 
             <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Nama Customer
+                  </label>
+                  <input
+                    type="text"
+                    value={custName}
+                    onChange={(e) => setCustName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
               {/* Product ID dan Tanggal */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
@@ -431,12 +447,12 @@ export default function OrderModal({
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Nama Produk
+                    Status
                   </label>
                   <input
                     type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -486,7 +502,6 @@ export default function OrderModal({
                 </div>
               </div>
 
-
               {/* Tombol Aksi */}
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
@@ -534,7 +549,26 @@ export default function OrderModal({
             </button>
           </div>
           <form onSubmit={handleSubmit}>
-            {/* Product ID dan Tanggal */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nama Customer</label>
+                <input
+                  type="text"
+                  value={custName}
+                  onChange={(e) => setCustName(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
@@ -559,24 +593,9 @@ export default function OrderModal({
                 />
               </div>
             </div>
-
-            {/* Nama Produk dan Durasi */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Email
-                </label>
-                <input
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Status
-                </label>
+                <label className="block text-sm font-medium mb-2">Status</label>
                 <input
                   type="text"
                   value={status}
@@ -585,9 +604,7 @@ export default function OrderModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Jumlah
-                </label>
+                <label className="block text-sm font-medium mb-2">Jumlah</label>
                 <input
                   type="number"
                   value={quantity}
