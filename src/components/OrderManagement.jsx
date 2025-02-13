@@ -82,7 +82,7 @@ export default function OrderManagement() {
   const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
   const [selectedOrder, setSelectedOrder] = useState(null); // Produk yang dipilih (untuk edit/view)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   const openModal = (mode, order = null) => {
     setModalMode(mode);
@@ -118,7 +118,7 @@ export default function OrderManagement() {
 
   // Fungsi untuk menghapus produk
   const handleDeleteOrder = (order) => {
-    setProductToDelete(order);
+    setOrderToDelete(order);
     setIsDeleteModalOpen(true);
   };
 
