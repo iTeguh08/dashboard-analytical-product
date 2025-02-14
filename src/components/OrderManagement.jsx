@@ -10,73 +10,13 @@ import {
 import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 import OrderModal from "./OrderModal";
 
-export default function OrderManagement() {
+export default function OrderManagement({ orders, setOrders, products }) {
   const [sortConfig, setSortConfig] = useState({
     key: "tanggal",
     direction: "desc",
   });
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
 
-  // Dummy Data
-  const initialOrders = [
-    {
-      id: 1,
-      customer: "John Doe",
-      email: "john@mail.com",
-      orderId: "ORD001",
-      produk: "Pantai Pandawa",
-      status: "Sukses",
-      tanggal: "2024-12-11",
-      jumlah: 2,
-      totalHarga: 400000,
-    },
-    {
-      id: 2,
-      customer: "Jane Smith",
-      email: "jane@mail.com",
-      orderId: "ORD002",
-      produk: "Snorkeling",
-      status: "Diproses",
-      tanggal: "2024-12-10",
-      jumlah: 4,
-      totalHarga: 800000,
-    },
-    {
-      id: 3,
-      customer: "Bob Johnson",
-      email: "bob@mail.com",
-      orderId: "ORD003",
-      produk: "Nusa Penida",
-      status: "Batal",
-      tanggal: "2024-12-09",
-      jumlah: 1,
-      totalHarga: 150000,
-    },
-    {
-      id: 4,
-      customer: "Alice Brown",
-      email: "alice@mail.com",
-      orderId: "ORD004",
-      produk: "Rafting Ayung",
-      status: "Sukses",
-      tanggal: "2024-12-12",
-      jumlah: 3,
-      totalHarga: 750000,
-    },
-    {
-      id: 5,
-      customer: "Charlie Wilson",
-      email: "charlie@mail.com",
-      orderId: "ORD005",
-      produk: "Bali Safari",
-      status: "Diproses",
-      tanggal: "2024-12-13",
-      jumlah: 2,
-      totalHarga: 600000,
-    },
-  ];
-
-  const [orders, setOrders] = useState(initialOrders);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
@@ -85,13 +25,26 @@ export default function OrderManagement() {
   const [orderToDelete, setOrderToDelete] = useState(null);
 
   const openModal = (mode, order = null) => {
+    if (mode === "view" && order) {
+      // Find the complete product data from products array
+      const productData = products.find(p => p.id === order.productId);
+      
+      // Merge order data with product data
+      const enrichedOrder = {
+        ...order,
+        productDetails: productData,
+        // Ensure images are passed through
+        gambar: productData?.gambar || []
+      };
+      
+      setSelectedOrder(enrichedOrder);
+    } else {
+      setSelectedOrder(order);
+    }
+    
     setModalMode(mode);
-    setSelectedOrder(order);
     setIsModalOpen(true);
-
-    // Tutup dropdown kategori dan nonaktifkan underline
     setIsProductDropdownOpen(false);
-    // setSortConfig({ key: null, direction: 'asc' }); // Reset underline
   };
 
   // Fungsi untuk menutup modal
@@ -362,6 +315,7 @@ export default function OrderManagement() {
           onSubmit={
             modalMode === "add" ? handleAddOrder : handleUpdateOrder
           }
+          products={products}
         />
       )}
       {/* Delete Confirmation Modal */}
