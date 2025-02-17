@@ -16,19 +16,19 @@ export default function OrderManagement({ orders, setOrders, products }) {
     direction: "desc",
   });
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
   const [selectedOrder, setSelectedOrder] = useState(null); // Produk yang dipilih (untuk edit/view)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("Semua Status"); // 'Semua Status', 'Sukses', 'Diproses', 'Batal'
 
   const openModal = (mode, order = null) => {
     if (mode === "view" && order) {
       // Find the complete product data from products array
-      const productData = products.find(p => p.id === order.productId);
-      
+      const productData = products.find(p => p.nama === order.produk);
+
       // Merge order data with product data
       const enrichedOrder = {
         ...order,
@@ -36,12 +36,12 @@ export default function OrderManagement({ orders, setOrders, products }) {
         // Ensure images are passed through
         gambar: productData?.gambar || []
       };
-      
+
       setSelectedOrder(enrichedOrder);
     } else {
       setSelectedOrder(order);
     }
-    
+
     setModalMode(mode);
     setIsModalOpen(true);
     setIsProductDropdownOpen(false);
@@ -55,10 +55,17 @@ export default function OrderManagement({ orders, setOrders, products }) {
 
   // Fungsi untuk menambahkan produk baru
   const handleAddOrder = (newOrder) => {
-    setOrders((prevOrders) => [
-      ...prevOrders,
-      { ...newOrder, id: Date.now() },
-    ]);
+    setOrders((prevOrders) => {
+      const updatedOrders = [
+        ...prevOrders,
+        {
+          ...newOrder,
+          id: Date.now(), // Tetap buat id unik
+          orderId: newOrder.orderId // Simpan orderId dari modal
+        }
+      ];
+      return updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+    });
   };
 
   // Fungsi untuk mengupdate produk
@@ -66,7 +73,7 @@ export default function OrderManagement({ orders, setOrders, products }) {
     const updatedOrders = orders.map((order) =>
       order.id === selectedOrder.id ? updatedOrder : order
     );
-    setOrders(updatedOrders);
+    setOrders(updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)));
   };
 
   // Fungsi untuk menghapus produk
@@ -78,9 +85,9 @@ export default function OrderManagement({ orders, setOrders, products }) {
   const confirmDelete = () => {
     if (orderToDelete) {
       const updatedOrders = orders.filter(
-        (order) => order.id !== productToDelete.id
+        (order) => order.id !== orderToDelete.id
       );
-      setOrders(updatedOrders); // Perbaiki nama fungsi
+      setOrders(updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))); // Perbaiki nama fungsi
       setIsDeleteModalOpen(false);
       setOrderToDelete(null);
     }
@@ -148,15 +155,17 @@ export default function OrderManagement({ orders, setOrders, products }) {
     const nameMatch = order.customer
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
-    return nameMatch;
+    const statusMatch =
+      selectedStatus === "Semua Status" || order.status === selectedStatus;
+    return nameMatch && statusMatch;
   });
 
-  // useEffect(() => {
-  //   if (sortConfig.key !== "productName") {
-  //     setSelectedProduct(null); // Reset produk yang dipilih
-  //     setIsProductDropdownOpen(false);
-  //   }
-  // }, [sortConfig.key]);
+  // Urutkan data secara descending berdasarkan tanggal secara default
+  useEffect(() => {
+    setOrders((prevOrders) =>
+      [...prevOrders].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+    );
+  }, [setOrders]);
 
   return (
     <div className="bg-white rounded-lg p-6">
@@ -200,13 +209,48 @@ export default function OrderManagement({ orders, setOrders, products }) {
               <th className="py-3 w-[10%] min-w-[100px]">Produk</th>
               {/* Kolom Produk dengan Underline */}
               <th
-                className="py-3 w-[9%] min-w-[150px] relative"
+                className="py-3 w-[9%] min-w-[100px] cursor-pointer relative"
                 onClick={() => {
                   setIsProductDropdownOpen(!isProductDropdownOpen);
-                  setSortConfig({ key: "kategori", direction: "asc" }); // Aktifkan underline
+                  setSortConfig({ key: "status", direction: "asc" });
                 }}
               >
-                Status
+                <div className="flex items-center">
+                  <span className="relative mr-2">
+                    Status
+                    {getActiveUnderline("status")}
+                  </span>
+                  <FaChevronDown className="text-xs text-gray-400" />
+                </div>
+                {/* Dropdown Filter */}
+                {isProductDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                    <div
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setSelectedStatus("Semua Status")}
+                    >
+                      Semua Status
+                    </div>
+                    <div
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setSelectedStatus("Sukses")}
+                    >
+                      Sukses
+                    </div>
+                    <div
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setSelectedStatus("Diproses")}
+                    >
+                      Diproses
+                    </div>
+                    <div
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setSelectedStatus("Batal")}
+                    >
+                      Batal
+                    </div>
+                  </div>
+                )}
               </th>
               {/* Kolom Tanggal dengan Underline */}
               <th
@@ -263,12 +307,13 @@ export default function OrderManagement({ orders, setOrders, products }) {
                 <td className="py-4">{order.produk}</td>
                 <td className="py-4">
                   <span
-                    className={`px-2 py-1 rounded-full text-sm ${order.status === "Sukses"
-                      ? "bg-green-100 text-green-600"
-                      : order.status === "Batal"
+                    className={`px-2 py-1 rounded-full text-sm ${
+                      order.status === "Sukses"
+                        ? "bg-green-100 text-green-600"
+                        : order.status === "Batal"
                         ? "bg-red-100 text-red-600"
                         : "bg-yellow-100 text-yellow-600"
-                      }`}
+                    }`}
                   >
                     {order.status}
                   </span>

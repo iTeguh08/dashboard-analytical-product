@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { Tag, Clock, Calendar, Hash, AlertTriangle } from "lucide-react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const getCustomStyles = (mode) => ({
   content: {
@@ -70,68 +72,51 @@ const scrollableContent = `
 
 Modal.setAppElement("#root");
 
-export default function OrderModal({
-  isOpen,
-  onRequestClose,
-  mode,
-  order,
-  onSubmit,
-}) {
-  const [custName, setCustName] = useState("");
-  const [date, setDate] = useState("");
-  const [price, setPrice] = useState(0); // Default value sebagai angka
-  const [orderID, setOrderId] = useState(""); // Ubah nama variabel agar lebih jelas
-  const [email, setEmail] = useState("");
-  const [productName, setProductName] = useState(""); // Default value sebagai string
-  const [quantity, setQuantity] = useState(0); // Default value sebagai angka
-  const [status, setStatus] = useState(""); // Default value sebagai string
+function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products }) {
+  const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
     if (mode === "add") {
-      setOrderId(`ORD-${Math.floor(1000 + Math.random() * 8000)}`);
-    } else if (mode === "edit" || mode === "view") {
-      setCustName(order.customer || "");
-      setEmail(order.email || "");
-      setProductName(order.produk || "");
-      setQuantity(order.jumlah || 0);
-      setPrice(order.totalHarga || 0);
-      setStatus(order.status || "");
-      setDate(order.tanggal || "");
+      const newOrderId = `ORD${Math.floor(100 + Math.random() * 999)}`;
+      setOrderId(newOrderId);
     }
-  }, [mode, order]);
+  }, [mode]);
 
-  const resetForm = () => {
-    setOrderId("");
-    setCustName("");
-    setEmail("");
-    setProductName([]); // String, bukan array
-    setQuantity(0); // Angka, bukan string
-    setPrice(0); // Angka, bukan string
-    setStatus("");
-    setDate("");
+  const initialValues = {
+    custName: order?.customer || "",
+    email: order?.email || "",
+    productName: order?.produk || (products.length > 0 ? products[0].nama : ""),
+    quantity: order?.jumlah || 0,
+    price: order?.totalHarga || 0,
+    status: order?.status || "Sukses",
+    date: order?.tanggal || "",
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const parsedPrice = parseFloat(price);
-    if (isNaN(parsedPrice)) {
-      alert("Harga harus berupa angka.");
-      return;
-    }
+  const validationSchema = Yup.object().shape({
+    custName: Yup.string().required("Nama customer harus diisi"),
+    email: Yup.string().email("Email tidak valid").required("Email harus diisi"),
+    productName: Yup.string().required("Nama produk harus dipilih"),
+    quantity: Yup.number().min(1, "Jumlah harus lebih dari 0").required("Jumlah harus diisi"),
+    price: Yup.number().min(1, "Harga harus lebih dari 0").required("Harga harus diisi"),
+    status: Yup.string().required("Status harus dipilih"),
+    date: Yup.date().required("Tanggal harus diisi"),
+  });
+
+  const handleSubmit = (values) => {
     const newOrder = {
-      id: orderID,
-      customer: custName, // Sesuaikan dengan nama properti di OrderManagement
-      email: email,
-      produk: productName, // Gunakan 'produk' sesuai struktur data
-      jumlah: quantity,
-      totalHarga: parsedPrice, // Gunakan 'totalHarga' sesuai struktur data
-      status: status,
-      tanggal: date,
+      orderId: orderId,
+      customer: values.custName,
+      email: values.email,
+      produk: values.productName,
+      jumlah: values.quantity,
+      totalHarga: values.price,
+      status: values.status,
+      tanggal: values.date,
     };
-    onSubmit(newOrder); // Kirim data ke parent component
-    resetForm();
+    onSubmit(newOrder);
     onRequestClose();
   };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -167,7 +152,7 @@ export default function OrderModal({
             <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
             <h2 className="text-xl font-bold mb-4">Konfirmasi Penghapusan</h2>
             <p className="mb-6">
-              Apakah Anda yakin ingin menghapus order "{order?.custName}"?
+              Apakah Anda yakin ingin menghapus order customer dari "{order.customer}"?
             </p>
             <div className="flex justify-center gap-4">
               <button
@@ -188,58 +173,13 @@ export default function OrderModal({
       ) : mode === "view" ? (
         // Tampilan khusus View
         <div className="flex flex-col md:flex-row" style={{ border: "none" }}>
-          {previewUrls.length > 0 ? (
+          {order?.gambar && order.gambar.length > 0 ? (
             <div className="relative w-full md:w-2/5 p-4 flex items-center justify-center">
-              {/* Gambar */}
               <img
-                src={previewUrls[activeImageIndex] || "/placeholder.svg"}
-                alt={`Preview ${activeImageIndex}`}
+                src={order.gambar[0]} // Ambil gambar pertama dari array `gambar`
+                alt={`Preview ${order.nama}`}
                 className="w-full h-[300px] object-cover rounded-lg shadow-md"
               />
-
-              {/* Navigation Buttons */}
-              {previewUrls.length > 1 && (
-                <>
-                  <button
-                    onClick={handleImageNavigation}
-                    className="absolute top-1/2 left-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3 w-3 text-gray-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={handleImageNavigation}
-                    className="absolute top-1/2 right-6 transform rounded-sm -translate-y-1/2 bg-white p-[0.4rem] shadow-md hover:bg-gray-200 transition duration-300"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3 w-3 text-gray-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
-                </>
-              )}
             </div>
           ) : (
             <p>Tidak ada gambar tersedia.</p>
@@ -248,7 +188,7 @@ export default function OrderModal({
           {/* Bagian Detail */}
           <div className="w-full md:w-3/5 p-6 pl-2 overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-3xl font-bold text-gray-800">{custName}</h2>
+              <h2 className="text-3xl font-bold text-gray-800">{initialValues.productName}</h2>
               <button
                 onClick={onRequestClose}
                 className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -270,34 +210,18 @@ export default function OrderModal({
                 </svg>
               </button>
             </div>
+            <h2 className="text-sm text-gray-500 mb-2">Customer contact information</h2>
+            <div className="flex justify-between items-start">
+              <h2 className="text-xl font-bold text-gray-800">{initialValues.custName}</h2>
+            </div>
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-3xl font-bold text-gray-800">{email}</h2>
-              <button
-                onClick={onRequestClose}
-                className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Tutup modal"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+              <h2 className="text-lg font-bold text-gray-600">{initialValues.email}</h2>
             </div>
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-blue-600">
-                  Rp {price.toLocaleString()}
+                  Rp {initialValues.price.toLocaleString()}
                 </span>
               </div>
 
@@ -309,13 +233,13 @@ export default function OrderModal({
                         Jumlah
                       </th>
                       <th className="text-left pb-2 font-medium text-gray-500">
-                        Produk
-                      </th>
-                      <th className="text-left pb-2 font-medium text-gray-500">
                         ID Order
                       </th>
                       <th className="text-left pb-2 font-medium text-gray-500">
                         Tanggal
+                      </th>
+                      <th className="text-left pb-2 font-medium text-gray-500">
+                        Status
                       </th>
                     </tr>
                   </thead>
@@ -323,25 +247,16 @@ export default function OrderModal({
                     <tr>
                       <td className="py-2">
                         <div className="flex items-center">
-                          <Tag className="w-4 h-4 mr-2 text-gray-400" />
                           <span className="font-medium text-gray-900">
-                            {quantity}
+                            {initialValues.quantity}
                           </span>
                         </div>
                       </td>
                       <td className="py-2">
                         <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                          <Hash className="w-4 h-4 text-gray-400" />
                           <span className="font-medium text-gray-900">
-                            {productName} Jam
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2">
-                        <div className="flex items-center">
-                          <Hash className="w-4 h-4 mr-2 text-gray-400" />
-                          <span className="font-medium text-gray-900">
-                            {orderID}
+                            {orderId}
                           </span>
                         </div>
                       </td>
@@ -349,7 +264,22 @@ export default function OrderModal({
                         <div className="flex items-center">
                           <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                           <span className="font-medium text-gray-900">
-                            {date}
+                            {initialValues.date}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-2">
+                        <div className="flex items-center">
+                          <span
+                            className={`px-2 py-1 rounded-full text-sm ${
+                              initialValues.status === "Sukses"
+                                ? "bg-green-100 text-green-600"
+                                : initialValues.status === "Batal"
+                                ? "bg-red-100 text-red-600"
+                                : "bg-yellow-100 text-yellow-600"
+                            }`}
+                          >
+                            {initialValues.status}
                           </span>
                         </div>
                       </td>
@@ -360,72 +290,70 @@ export default function OrderModal({
             </div>
           </div>
         </div>
-      ) : mode === "edit" ? (
-        // Tampilan khusus Edit
-        <div
-          onClick={(e) => {
-            e.stopPropagation(); // Mencegah event klik menyebar ke parent
-          }}
+      ) : (
+        // Form untuk Add dan Edit
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
         >
-          <div className="w-full p-10">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <h2 className="text-xl font-bold">Edit Order</h2>
-              <button
-                onClick={onRequestClose}
-                className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Tutup modal"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
+          {({ isSubmitting }) => (
+            <Form className="w-full p-10">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="text-xl font-bold">{mode === "edit" ? "Edit Order" : "Tambah Order Baru"}</h2>
+                <button
+                  onClick={onRequestClose}
+                  className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Tutup modal"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-gray-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
 
-            <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Nama Customer
                   </label>
-                  <input
+                  <Field
                     type="text"
-                    value={custName}
-                    onChange={(e) => setCustName(e.target.value)}
+                    name="custName"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <ErrorMessage name="custName" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Email
-                  </label>
-                  <input
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <Field
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    name="email"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                 </div>
               </div>
-              {/* Product ID dan Tanggal */}
+
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Produk ID
+                    Order ID
                   </label>
                   <input
                     type="text"
-                    value={orderID}
+                    value={orderId}
                     readOnly
                     className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                   />
@@ -434,222 +362,83 @@ export default function OrderModal({
                   <label className="block text-sm font-medium mb-2">
                     Tanggal
                   </label>
-                  <input
+                  <Field
                     type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    name="date"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <ErrorMessage name="date" component="div" className="text-red-500 text-sm" />
                 </div>
               </div>
 
-              {/* Nama Produk dan Durasi */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Status
-                  </label>
-                  <input
-                    type="text"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Durasi (Jam)
-                  </label>
-                  <input
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Ketersediaan dan Kategori */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Nama Produk
-                  </label>
-                  <select
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
+                  <label className="block text-sm font-medium mb-2">Status</label>
+                  <Field
+                    as="select"
+                    name="status"
                     className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
                     style={{
                       backgroundImage:
                         "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
                     }}
                   >
-                    <option value="Tour">Tour</option>
-                    <option value="Activity">Activity</option>
-                    <option value="Attraction">Attraction</option>
-                  </select>
+                    <option value="Sukses">Sukses</option>
+                    <option value="Diproses">Diproses</option>
+                    <option value="Batal">Batal</option>
+                  </Field>
+                  <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Harga (Rp)
-                  </label>
-                  <input
+                  <label className="block text-sm font-medium mb-2">Jumlah</label>
+                  <Field
                     type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    name="quantity"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  <ErrorMessage name="quantity" component="div" className="text-red-500 text-sm" />
                 </div>
               </div>
 
-              {/* Tombol Aksi */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <button
-                  type="button"
-                  onClick={onRequestClose}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  onClick={handleSubmit}
-                  className="px-4 py-2 text-white rounded-lg gradient-button-blue"
-                >
-                  Simpan Perubahan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : (
-        // Tampilan untuk Add
-        <div className="w-full p-10">
-          <div className="flex justify-between items-center mb-6 border-b pb-4">
-            <h2 className="text-xl font-bold">Tambah Order Baru</h2>
-            <button
-              onClick={onRequestClose}
-              className="p-[3px] pr-[2.8px] border border-gray-300 rounded-[3px] hover:bg-gray-100/80 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-label="Tutup modal"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-gray-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Nama Customer</label>
-                <input
-                  type="text"
-                  value={custName}
-                  onChange={(e) => setCustName(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Order ID
-                </label>
-                <input
-                  type="text"
-                  value={orderID}
-                  readOnly
-                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Tanggal
-                </label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Status</label>
-                <input
-                  type="text"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Jumlah</label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Ketersediaan dan Kategori */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Nama Produk
-                </label>
-                <select
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
-                  style={{
-                    backgroundImage:
-                      "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                  }}
-                >
-                  <option value="Tour">Tour</option>
-                  <option value="Activity">Activity</option>
-                  <option value="Attraction">Attraction</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Nama Produk
+                  </label>
+                  <Field
+                    as="select"
+                    name="productName"
+                    className="w-full p-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.5em_1.5em]"
+                    style={{
+                      backgroundImage:
+                        "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                    }}
+                  >
+                    {products.map((product) => (
+                      <option key={product.id} value={product.nama}>
+                      {product.nama}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="productName" component="div" className="text-red-500 text-sm" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Total Harga (Rp)
                 </label>
-                <input
+                <Field
                   type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  name="price"
                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                <ErrorMessage name="price" component="div" className="text-red-500 text-sm" />
               </div>
             </div>
 
             {/* Tombol Aksi */}
             <div className="flex justify-end gap-3 pt-4 border-t">
               <button
+                type="button"
                 onClick={onRequestClose}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
               >
@@ -657,15 +446,18 @@ export default function OrderModal({
               </button>
               <button
                 type="submit"
-                onClick={handleSubmit}
-                className={`px-4 py-2 text-white rounded-lg gradient-button-green`}
+                className={`px-4 py-2 text-white rounded-lg ${mode === "edit" ? "gradient-button-blue" : "gradient-button-green"}`}
+                disabled={isSubmitting}
               >
-                Buat Produk
+                {mode === "edit" ? "Simpan Perubahan" : "Buat Produk"}
               </button>
             </div>
-          </form>
-        </div>
-      )}
-    </Modal>
-  );
+          </Form>
+        )}
+      </Formik>
+    )}
+  </Modal>
+);
 }
+
+export default OrderModal;

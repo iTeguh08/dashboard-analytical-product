@@ -176,7 +176,7 @@ export default function App() {
     },
     {
       id: 10,
-      nama: "Waterbom Bali",
+      nama: "Waterboom Bali",
       ketersediaan: "Habis",
       kategori: "Activity",
       tanggal: "2024-12-20",
@@ -191,7 +191,7 @@ export default function App() {
         "https://www.whitewaterwest.com/wp-content/uploads/2019/03/FlowRider-Double-Waterbom-Bali-Kuta-Bali-2-492x702.jpg",
       ],
     },
-  ]) 
+  ]);
 
   const [orders, setOrders] = useState([
     {
@@ -264,97 +264,97 @@ export default function App() {
       jumlah: 2,
       totalHarga: 600000,
       gambar: [
-        // Hasil pencarian "Bali Safari" di Unsplash
-        "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_3000,h_2250/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/mjb5xsoj1r5m92whyx8p/PesanBaliSafariandMarineParkTour-KlookIndonesia.jpg",
-        "https://yourtrip.id/wp-content/uploads/2023/02/Bali-Safari.jpg",
-      ],
-    },
-  ]) 
-
-  const metrics = [
-    { title: "Tour", value: "78" },
-    { title: "Activity", value: "87" },
-    { title: "Attraction", value: "98" },
-  ];
-
-  return (
-    <Router>
-      <div className="flex h-screen overflow-hidden bg-white">
-        {/* Fixed Sidebar */}
-        <div className="flex-none">
-          <Sidebar />
-        </div>
-
-        {/* Scrollable Middle Section */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-8">
-            {/* Header */}
-            <Header />
-
-            {/* Routes untuk Dashboard dan Katalog Produk */}
-            <Routes>
-              {/* Route untuk Dashboard */}
-              <Route
-                path="/"
-                element={
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {metrics.map((metric) => (
-                        <MetricCard
-                          key={metric.title}
-                          title={metric.title}
-                          value={metric.value}
-                          isActive={activeProduct === metric.title}
-                          onClick={() => setActiveProduct(metric.title)}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="mt-8">
-                      <SalesChart productType={activeProduct} />
-                    </div>
-
-                    <div className="mt-2">
-                      <ProductTable />
-                    </div>
-                  </>
-                }
-              />
-
-              {/* Route untuk Katalog Produk */}
-              <Route path="/katalog-produk" element={<KatalogProduk products={products} setProducts={setProducts}/>} />
-              <Route path="/order-management" element={<OrderManagement orders={orders} setOrders={setOrders} products={products}/>} />
-            </Routes>
-          </div>
-        </div>
-
-        {/* Fixed Right Section */}
-        <RightSection />
-      </div>
-    </Router>
-  );
-}
-
-// Komponen RightSection untuk menentukan apakah SalesCard dan DonutChart ditampilkan
-function RightSection() {
-  const location = useLocation(); // Ambil path saat ini
-
-  // Tampilkan SalesCard dan DonutChart hanya jika path bukan '/katalog-produk'
-  if (
-    location.pathname === "/katalog-produk" ||
-    location.pathname === "/order-management"
-  ) {
-    return null;
-  }
-
-  return (
-    <div className="flex-none w-[21dvw] h-screen overflow-hidden bg-white">
-      <div className="py-8 px-3 flex flex-col">
-        <SalesCard />
-        <div className="mt-4">
-          <DonutChart />
-        </div>
-      </div>
-    </div>
-  );
-}
+                // Hasil pencarian "Bali Safari" di Unsplash
+                "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_3000,h_2250/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/mjb5xsoj1r5m92whyx8p/PesanBaliSafariandMarineParkTour-KlookIndonesia.jpg",
+                "https://yourtrip.id/wp-content/uploads/2023/02/Bali-Safari.jpg",
+              ],
+            },
+          ]);
+        
+          const metrics = [
+            { title: "Tour", value: "78" },
+            { title: "Activity", value: "87" },
+            { title: "Attraction", value: "98" },
+          ];
+        
+          return (
+            <Router>
+              <div className="flex h-screen overflow-hidden bg-white">
+                {/* Fixed Sidebar */}
+                <div className="flex-none">
+                  <Sidebar />
+                </div>
+        
+                {/* Scrollable Middle Section */}
+                <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                  <div className="p-8">
+                    {/* Header */}
+                    <Header />
+        
+                    {/* Routes untuk Dashboard dan Katalog Produk */}
+                    <Routes>
+                      {/* Route untuk Dashboard */}
+                      <Route
+                        path="/"
+                        element={
+                          <>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              {metrics.map((metric) => (
+                                <MetricCard
+                                  key={metric.title}
+                                  title={metric.title}
+                                  value={metric.value}
+                                  isActive={activeProduct === metric.title}
+                                  onClick={() => setActiveProduct(metric.title)}
+                                />
+                              ))}
+                            </div>
+        
+                            <div className="mt-8">
+                              <SalesChart productType={activeProduct} />
+                            </div>
+        
+                            <div className="mt-2">
+                              <ProductTable />
+                            </div>
+                          </>
+                        }
+                      />
+        
+                      {/* Route untuk Katalog Produk */}
+                      <Route path="/katalog-produk" element={<KatalogProduk products={products} setProducts={setProducts} />} />
+                      <Route path="/order-management" element={<OrderManagement orders={orders} setOrders={setOrders} products={products} />} />
+                    </Routes>
+                  </div>
+                </div>
+        
+                {/* Fixed Right Section */}
+                <RightSection />
+              </div>
+            </Router>
+          );
+        }
+        
+        // Komponen RightSection untuk menentukan apakah SalesCard dan DonutChart ditampilkan
+        function RightSection() {
+          const location = useLocation(); // Ambil path saat ini
+        
+          // Tampilkan SalesCard dan DonutChart hanya jika path bukan '/katalog-produk'
+          if (
+            location.pathname === "/katalog-produk" ||
+            location.pathname === "/order-management"
+          ) {
+            return null;
+          }
+        
+          return (
+            <div className="flex-none w-[21dvw] h-screen overflow-hidden bg-white">
+              <div className="py-8 px-3 flex flex-col">
+                <SalesCard />
+                <div className="mt-4">
+                  <DonutChart />
+                </div>
+              </div>
+            </div>
+          );
+        }

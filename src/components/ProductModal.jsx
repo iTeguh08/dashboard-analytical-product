@@ -91,16 +91,10 @@ export default function ProductModal({
   const [selectedFilesCount, setSelectedFilesCount] = useState(0); // Tambahkan state baru
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  // Generate Product ID untuk mode tambah
   useEffect(() => {
     if (mode === "add") {
-      setProductId(`PROD-${Math.floor(1000 + Math.random() * 9000)}`);
-    }
-  }, [mode]);
-
-  useEffect(() => {
-    if (mode === "add") {
-      setProductId(`PROD-${Math.floor(1000 + Math.random() * 9000)}`);
+      const newProductId = `PRD${Math.floor(100 + Math.random() * 999)}`;
+      setProductId(newProductId);
     } else if (mode === "edit" || mode === "view") {
       setProductName(product.nama);
       setAvailability(product.ketersediaan);
@@ -109,7 +103,7 @@ export default function ProductModal({
       setRating(product.rating);
       setPrice(product.harga);
       setDescription(product.deskripsi || "");
-      setProductId(product.id || "");
+      setProductId(product.productId || "");
       setDuration(product.durasi || "");
 
       if (product.gambar) {
@@ -192,7 +186,7 @@ export default function ProductModal({
     e.preventDefault();
 
     const newProduct = {
-      id: productId,
+      productId: productId,
       nama: productName,
       ketersediaan: availability,
       kategori: category,
@@ -368,6 +362,15 @@ export default function ProductModal({
                 <span className="text-xl font-bold text-blue-600">
                   Rp {price.toLocaleString()}
                 </span>
+                <span
+                  className={`px-2 py-1 rounded-full text-sm ${
+                    availability === "Tersedia"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {availability}
+                </span>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg
@@ -504,6 +507,7 @@ export default function ProductModal({
                     Tanggal
                   </label>
                   <input
+                  required
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
@@ -519,6 +523,7 @@ export default function ProductModal({
                     Nama Produk
                   </label>
                   <input
+                  required
                     type="text"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
@@ -530,6 +535,7 @@ export default function ProductModal({
                     Durasi (Jam)
                   </label>
                   <input
+                  required
                     type="number"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
@@ -584,6 +590,7 @@ export default function ProductModal({
                     Rating
                   </label>
                   <input
+                  required
                     type="number"
                     step="0.1"
                     min="0"
@@ -598,6 +605,7 @@ export default function ProductModal({
                     Harga (Rp)
                   </label>
                   <input
+                  required
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
@@ -623,6 +631,7 @@ export default function ProductModal({
                   onDragLeave={handleDragLeave}
                 >
                   <input
+                  required
                     type="file"
                     accept="image/png, image/jpeg"
                     multiple
@@ -783,6 +792,7 @@ export default function ProductModal({
                   Tanggal
                 </label>
                 <input
+                required
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
@@ -798,6 +808,7 @@ export default function ProductModal({
                   Nama Produk
                 </label>
                 <input
+                required
                   type="text"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
@@ -809,6 +820,7 @@ export default function ProductModal({
                   Durasi (Jam)
                 </label>
                 <input
+                required
                   type="number"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
@@ -861,6 +873,7 @@ export default function ProductModal({
               <div>
                 <label className="block text-sm font-medium mb-2">Rating</label>
                 <input
+                required
                   type="number"
                   step="0.1"
                   min="0"
@@ -875,6 +888,7 @@ export default function ProductModal({
                   Harga (Rp)
                 </label>
                 <input
+                required
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
@@ -900,6 +914,7 @@ export default function ProductModal({
                 onDragLeave={handleDragLeave}
               >
                 <input
+                required
                   type="file"
                   accept="image/png, image/jpeg"
                   multiple

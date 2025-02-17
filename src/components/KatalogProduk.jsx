@@ -3,11 +3,11 @@ import {
   FaChevronUp,
   FaChevronDown,
   FaEdit,
-  FaList,
   FaTrashAlt,
   FaSearch,
+  FaList,
 } from "react-icons/fa";
-import { FiArrowUp, FiArrowDown } from "react-icons/fi";  
+import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 import ProductModal from "./ProductModal";
 
 export default function KatalogProduk({ products, setProducts }) {
@@ -16,50 +16,18 @@ export default function KatalogProduk({ products, setProducts }) {
     direction: "desc",
   });
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("Semua Kategori");
-  const [selectedAvailability, setSelectedAvailability] = useState("all"); // 'all', 'Tersedia', 'Habis'
-
-  // Data produk
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // 'add', 'edit', atau 'view'
   const [selectedProduct, setSelectedProduct] = useState(null); // Produk yang dipilih (untuk edit/view)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("Semua Kategori"); // 'Semua Kategori', 'Activity', 'Tour', 'Attraction'
+  const [selectedAvailability, setSelectedAvailability] = useState("all"); // 'all', 'Tersedia', 'Habis'
 
-  // Sample product images added
-  const defaultProducts = [
-    {
-      id: 1,
-      nama: "Produk 1",
-      kategori: "Activity",
-      tanggal: "2024-01-01",
-      rating: 4,
-      harga: 100000,
-      ketersediaan: "Tersedia",
-      gambar: ["https://via.placeholder.com/200x150"]
-    },
-    {
-      id: 2,
-      nama: "Produk 2",
-      kategori: "Tour",
-      tanggal: "2024-01-02",
-      rating: 5,
-      harga: 200000,
-      ketersediaan: "Tersedia",
-      gambar: ["https://via.placeholder.com/200x150"]
-    }
-  ];
-
-  useEffect(() => {
-    if (!products || products.length === 0) {
-      setProducts(defaultProducts);
-    }
-  }, []);
-
-  // Fungsi untuk membuka modal
   const openModal = (mode, product = null) => {
-    setModalMode(mode);
     setSelectedProduct(product);
+    setModalMode(mode);
     setIsModalOpen(true);
     setIsCategoryDropdownOpen(false);
   };
@@ -67,20 +35,25 @@ export default function KatalogProduk({ products, setProducts }) {
   // Fungsi untuk menutup modal
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedProduct(null);
+    setSelectedProduct(null); // Reset selectedProduct saat modal ditutup
   };
 
   // Fungsi untuk menambahkan produk baru
   const handleAddProduct = (newProduct) => {
     setProducts((prevProducts) => [
       ...prevProducts,
-      { ...newProduct, id: Date.now() },
+      {
+        ...newProduct,
+        id: Date.now(), // Tetap buat id unik
+        productId: newProduct.productId // Simpan orderId dari modal
+      }
     ]);
   };
 
+  // Fungsi untuk mengupdate produk
   const handleUpdateProduct = (updatedProduct) => {
     const updatedProducts = products.map((product) =>
-      product.id === updatedProduct.id ? updatedProduct : product
+      product.id === selectedProduct.id ? updatedProduct : product
     );
     setProducts(updatedProducts);
   };
@@ -96,30 +69,46 @@ export default function KatalogProduk({ products, setProducts }) {
       const updatedProducts = products.filter(
         (product) => product.id !== productToDelete.id
       );
-      setProducts(updatedProducts);
+      setProducts(updatedProducts); // Perbaiki nama fungsi
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
     }
   };
 
-  // Fungsi untuk mengurutkan data
+  // Sorting logic
   const sortData = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
     setSortConfig({ key, direction });
+
+    const sorted = [...products].sort((a, b) => {
+      if (key === "tanggal") {
+        return direction === "asc"
+          ? new Date(a.tanggal) - new Date(b.tanggal)
+          : new Date(b.tanggal) - new Date(a.tanggal);
+      }
+      if (key === "rating" || key === "harga") {
+        return direction === "asc" ? a[key] - b[key] : b[key] - a[key];
+      }
+      return a[key].localeCompare(b[key]);
+    });
+
+    setProducts(sorted);
   };
 
   // Fungsi untuk mendapatkan ikon panah berdasarkan arah pengurutan
   const getSortIcon = (key) => {
     if (sortConfig.key === key) {
+      // Saat kolom aktif, gunakan panah biasa (↑ atau ↓)
       return sortConfig.direction === "asc" ? (
-        <FiArrowUp /> 
+        <FiArrowUp /> // Panah ke atas untuk ascending
       ) : (
-        <FiArrowDown /> 
+        <FiArrowDown /> // Panah ke bawah untuk descending
       );
     }
+    // Saat kolom tidak aktif, gunakan chevron ganda (siku)
     return (
       <div className="flex flex-col items-center gap-0 text-gray-400">
         <FaChevronUp className="text-xs" />
@@ -128,31 +117,17 @@ export default function KatalogProduk({ products, setProducts }) {
     );
   };
 
-  // Filter produk
-  const [searchQuery, setSearchQuery] = useState("");
   const filteredProducts = products.filter((product) => {
+    if (!product.nama) return false; // Skip jika nama produk tidak ada
     const nameMatch = product.nama
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const categoryMatch =
-      selectedCategory === "Semua Kategori" ||
-      product.kategori === selectedCategory;
+      selectedCategory === "Semua Kategori" || product.kategori === selectedCategory;
     const availabilityMatch =
-      selectedAvailability === "all" ||
-      product.ketersediaan === selectedAvailability;
+      selectedAvailability === "all" || product.ketersediaan === selectedAvailability;
     return nameMatch && categoryMatch && availabilityMatch;
   });
-
-  // Perbaikan 2: Tambahkan useEffect untuk handle klik di luar dropdown
-  useEffect(() => {
-    if (sortConfig.key !== "ketersediaan") {
-      setSelectedAvailability("all");
-    }
-    if (sortConfig.key !== "kategori") {
-      setSelectedCategory("Semua Kategori");
-      setIsCategoryDropdownOpen(false);
-    }
-  }, [sortConfig.key]);
 
   return (
     <div className="bg-white rounded-lg p-6">
@@ -402,7 +377,6 @@ export default function KatalogProduk({ products, setProducts }) {
         </table>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <ProductModal
           isOpen={isModalOpen}
@@ -412,6 +386,7 @@ export default function KatalogProduk({ products, setProducts }) {
           onSubmit={
             modalMode === "add" ? handleAddProduct : handleUpdateProduct
           }
+          products={products} // Tambahkan prop products
         />
       )}
       {/* Delete Confirmation Modal */}
