@@ -271,11 +271,11 @@ export default function App() {
             },
           ]);
         
-          const metrics = [
-            { title: "Tour", value: "78" },
-            { title: "Activity", value: "87" },
-            { title: "Attraction", value: "98" },
-          ];
+          const categories = ["Tour", "Activity", "Attraction"];
+          const metrics = categories.map(category => ({
+            title: category,
+            value: products.filter(product => product.kategori === category).length.toString()
+          }));
         
           return (
             <Router>
