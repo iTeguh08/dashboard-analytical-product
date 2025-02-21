@@ -26,7 +26,7 @@ export default function App() {
       nama: "Snorkeling",
       ketersediaan: "Tersedia",
       kategori: "Activity",
-      tanggal: "2024-12-11",
+      tanggal: "2025-12-11",
       rating: 4.7,
       harga: 200000,
       durasi: 3, // Durasi dalam jam
@@ -41,9 +41,9 @@ export default function App() {
     {
       id: 2,
       nama: "Nusa Penida",
-      ketersediaan: "Habis",
+      ketersediaan: "Tersedia",
       kategori: "Tour",
-      tanggal: "2024-12-09",
+      tanggal: "2025-12-09",
       rating: 4.8,
       harga: 150000,
       durasi: 8, // Durasi dalam jam
@@ -60,7 +60,7 @@ export default function App() {
       nama: "Pantai Pandawa",
       ketersediaan: "Tersedia",
       kategori: "Attraction",
-      tanggal: "2024-12-13",
+      tanggal: "2025-12-13",
       rating: 4.9,
       harga: 135000,
       durasi: 2, // Durasi dalam jam
@@ -77,7 +77,7 @@ export default function App() {
       nama: "Rafting Ayung",
       ketersediaan: "Tersedia",
       kategori: "Activity",
-      tanggal: "2024-11-25",
+      tanggal: "2025-11-25",
       rating: 4.6,
       harga: 250000,
       durasi: 4, // Durasi dalam jam
@@ -94,7 +94,7 @@ export default function App() {
       nama: "Tanah Lot",
       ketersediaan: "Tersedia",
       kategori: "Attraction",
-      tanggal: "2024-12-01",
+      tanggal: "2025-12-01",
       rating: 4.5,
       harga: 100000,
       durasi: 3, // Durasi dalam jam
@@ -109,9 +109,9 @@ export default function App() {
     {
       id: 6,
       nama: "Ubud Tour",
-      ketersediaan: "Habis",
+      ketersediaan: "Tersedia",
       kategori: "Tour",
-      tanggal: "2024-11-30",
+      tanggal: "2025-11-30",
       rating: 4.7,
       harga: 180000,
       durasi: 6, // Durasi dalam jam
@@ -128,7 +128,7 @@ export default function App() {
       nama: "Kintamani Tour",
       ketersediaan: "Tersedia",
       kategori: "Tour",
-      tanggal: "2024-12-05",
+      tanggal: "2025-12-05",
       rating: 4.8,
       harga: 220000,
       durasi: 5, // Durasi dalam jam
@@ -145,7 +145,7 @@ export default function App() {
       nama: "Tirta Empul",
       ketersediaan: "Tersedia",
       kategori: "Attraction",
-      tanggal: "2024-12-10",
+      tanggal: "2025-12-10",
       rating: 4.4,
       harga: 120000,
       durasi: 2, // Durasi dalam jam
@@ -162,7 +162,7 @@ export default function App() {
       nama: "Bali Safari",
       ketersediaan: "Tersedia",
       kategori: "Attraction",
-      tanggal: "2024-12-15",
+      tanggal: "2025-12-15",
       rating: 4.3,
       harga: 300000,
       durasi: 4, // Durasi dalam jam
@@ -177,9 +177,9 @@ export default function App() {
     {
       id: 10,
       nama: "Waterboom Bali",
-      ketersediaan: "Habis",
+      ketersediaan: "Tersedia",
       kategori: "Activity",
-      tanggal: "2024-12-20",
+      tanggal: "2025-12-20",
       rating: 4.9,
       harga: 350000,
       durasi: 6, // Durasi dalam jam
@@ -201,11 +201,10 @@ export default function App() {
       orderId: "ORD001",
       produk: "Pantai Pandawa",
       status: "Sukses",
-      tanggal: "2024-12-11",
+      tanggal: "2024-03-11",
       jumlah: 2,
       totalHarga: 400000,
       gambar: [
-        // Hasil pencarian "Pantai Pandawa Bali" di Unsplash
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSntEdXnfj4CBjdKQGfKYthAs7XdctIaSx41g&s",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiFafnucLm3QG8eZr12OJ-N-mXGSUWlX3xfCzxCqb1WSMd9mCaYNgETlqrckcpZJkLaDs&usqp=CAU",
       ],
@@ -217,11 +216,10 @@ export default function App() {
       orderId: "ORD002",
       produk: "Snorkeling",
       status: "Diproses",
-      tanggal: "2024-12-10",
+      tanggal: "2024-02-10",
       jumlah: 4,
       totalHarga: 800000,
       gambar: [
-        // Gambar diambil dari pencarian "snorkeling" di Unsplash
         "https://res.klook.com/image/upload/c_fill,w_750,h_750/q_80/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/bwg8wmcrubrjjgjaecys.jpg",
         "https://s-light.tiket.photos/t/01E25EBZS3W0FY9GTG6C42E1SE/rsfit19201280gsm/events/2021/04/23/437b4bbc-3f45-44b1-bff5-58d6218f9a8f-1619184378979-bf8ac3e826cfa8882365f39b517571a7.jpg",
       ],
@@ -233,9 +231,9 @@ export default function App() {
       orderId: "ORD003",
       produk: "Nusa Penida",
       status: "Batal",
-      tanggal: "2024-12-09",
+      tanggal: "2024-03-09",
       jumlah: 1,
-      totalHarga: 150000,
+      totalHarga: 350000,
     },
     {
       id: 4,
@@ -244,11 +242,10 @@ export default function App() {
       orderId: "ORD004",
       produk: "Rafting Ayung",
       status: "Sukses",
-      tanggal: "2024-12-12",
+      tanggal: "2024-04-12",
       jumlah: 3,
       totalHarga: 750000,
       gambar: [
-        // Pencarian dengan kata kunci "Rafting Ayung Bali" di Unsplash
         "https://s-light.tiket.photos/t/01E25EBZS3W0FY9GTG6C42E1SE/rsfit19201280gsm/events/2021/05/06/74e069fa-c4f0-4e6f-a4ab-ef1c8cc67505-1620272772592-a42bbcb094ce4bc6efd33d8ea02b65d9.jpg",
         "https://www.water-sport-bali.com/wp-content/uploads/2023/10/Ayung-Rafting-Ubud-Bali-Twitter.jpg",
       ],
@@ -260,101 +257,782 @@ export default function App() {
       orderId: "ORD005",
       produk: "Bali Safari",
       status: "Diproses",
-      tanggal: "2024-12-13",
+      tanggal: "2024-05-13",
+      jumlah: 2,
+      totalHarga: 300000,
+      gambar: [
+        "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_3000,h_2250/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/mjb5xsoj1r5m92whyx8p/PesanBaliSafariandMarineParkTour-KlookIndonesia.jpg",
+        "https://yourtrip.id/wp-content/uploads/2023/02/Bali-Safari.jpg",
+      ],
+    },
+    {
+      id: 6,
+      customer: "Eva Davis",
+      email: "eva@mail.com",
+      orderId: "ORD006",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-06-15",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 7,
+      customer: "Michael Brown",
+      email: "michael@mail.com",
+      orderId: "ORD007",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-07-20",
+      jumlah: 3,
+      totalHarga: 200000,
+    },
+    {
+      id: 8,
+      customer: "Sophia Lee",
+      email: "sophia@mail.com",
+      orderId: "ORD008",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-08-25",
+      jumlah: 2,
+      totalHarga: 200000,
+    },
+    {
+      id: 9,
+      customer: "David Wilson",
+      email: "david@mail.com",
+      orderId: "ORD009",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-09-30",
+      jumlah: 1,
+      totalHarga: 200000,
+    },
+    {
+      id: 10,
+      customer: "Olivia Clark",
+      email: "olivia@mail.com",
+      orderId: "ORD010",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-5-05",
+      jumlah: 1,
+      totalHarga: 135000,
+    },
+    {
+      id: 11,
+      customer: "James Taylor",
+      email: "james@mail.com",
+      orderId: "ORD011",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-11-10",
+      jumlah: 1,
+      totalHarga: 300000,
+    },
+    {
+      id: 11,
+      customer: "Sergei Dragunov",
+      email: "sergeidragunov@mail.com",
+      orderId: "ORD011",
+      produk: "Ubud Tour",
+      status: "Sukses",
+      tanggal: "2024-11-10",
+      jumlah: 2,
+      totalHarga: 500000,
+    },
+    {
+      id: 12,
+      customer: "Emma Johnson",
+      email: "emma@mail.com",
+      orderId: "ORD012",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-6-15",
+      jumlah: 4,
+      totalHarga: 800000,
+    },
+    {
+      id: 13,
+      customer: "Daniel White",
+      email: "daniel@mail.com",
+      orderId: "ORD013",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-09-20",
+      jumlah: 3,
+      totalHarga: 750000,
+    },
+    {
+      id: 14,
+      customer: "Ava Martin",
+      email: "ava@mail.com",
+      orderId: "ORD014",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-12-25",
+      jumlah: 2,
+      totalHarga: 100000,
+    },
+    {
+      id: 15,
+      customer: "William Harris",
+      email: "william@mail.com",
+      orderId: "ORD015",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-6-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 16,
+      customer: "Sophia Lee",
+      email: "sophia@mail.com",
+      orderId: "ORD016",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-01-15",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 16,
+      customer: "Iron Man",
+      email: "ironman@mail.com",
+      orderId: "ORD016",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-01-15",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 17,
+      customer: "Michael Brown",
+      email: "michael@mail.com",
+      orderId: "ORD017",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-02-20",
+      jumlah: 3,
+      totalHarga: 600000,
+    },
+    {
+      id: 18,
+      customer: "Eva Davis",
+      email: "eva@mail.com",
+      orderId: "ORD018",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-03-25",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 19,
+      customer: "David Wilson",
+      email: "david@mail.com",
+      orderId: "ORD019",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-04-30",
+      jumlah: 1,
+      totalHarga: 300000,
+    },
+    {
+      id: 20,
+      customer: "Olivia Clark",
+      email: "olivia@mail.com",
+      orderId: "ORD020",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-7-05",
+      jumlah: 1,
+      totalHarga: 135000,
+    },
+    {
+      id: 21,
+      customer: "James Taylor",
+      email: "james@mail.com",
+      orderId: "ORD021",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-06-10",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 22,
+      customer: "Emma Johnson",
+      email: "emma@mail.com",
+      orderId: "ORD022",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-07-15",
+      jumlah: 4,
+      totalHarga: 800000,
+    },
+    {
+      id: 23,
+      customer: "Daniel White",
+      email: "daniel@mail.com",
+      orderId: "ORD023",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-08-20",
+      jumlah: 3,
+      totalHarga: 250000,
+    },
+    {
+      id: 24,
+      customer: "Ava Martin",
+      email: "ava@mail.com",
+      orderId: "ORD024",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-09-25",
       jumlah: 2,
       totalHarga: 600000,
-      gambar: [
-                // Hasil pencarian "Bali Safari" di Unsplash
-                "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_3000,h_2250/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/mjb5xsoj1r5m92whyx8p/PesanBaliSafariandMarineParkTour-KlookIndonesia.jpg",
-                "https://yourtrip.id/wp-content/uploads/2023/02/Bali-Safari.jpg",
-              ],
-            },
-          ]);
-        
-          const categories = ["Tour", "Activity", "Attraction"];
-          const metrics = categories.map(category => ({
-            title: category,
-            value: products.filter(product => product.kategori === category).length.toString()
-          }));
-        
-          return (
-            <Router>
-              <div className="flex h-screen overflow-hidden bg-white">
-                {/* Fixed Sidebar */}
-                <div className="flex-none">
-                  <Sidebar />
-                </div>
-        
-                {/* Scrollable Middle Section */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                  <div className="p-8">
-                    {/* Header */}
-                    <Header />
-        
-                    {/* Routes untuk Dashboard dan Katalog Produk */}
-                    <Routes>
-                      {/* Route untuk Dashboard */}
-                      <Route
-                        path="/"
-                        element={
-                          <>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                              {metrics.map((metric) => (
-                                <MetricCard
-                                  key={metric.title}
-                                  title={metric.title}
-                                  value={metric.value}
-                                  isActive={activeProduct === metric.title}
-                                  onClick={() => setActiveProduct(metric.title)}
-                                />
-                              ))}
-                            </div>
-        
-                            <div className="mt-8">
-                              <SalesChart productType={activeProduct} />
-                            </div>
-        
-                            <div className="mt-2">
-                              <ProductTable />
-                            </div>
-                          </>
-                        }
-                      />
-        
-                      {/* Route untuk Katalog Produk */}
-                      <Route path="/katalog-produk" element={<KatalogProduk products={products} setProducts={setProducts} />} />
-                      <Route path="/order-management" element={<OrderManagement orders={orders} setOrders={setOrders} products={products} />} />
-                    </Routes>
-                  </div>
-                </div>
-        
-                {/* Fixed Right Section */}
-                <RightSection />
-              </div>
-            </Router>
-          );
-        }
-        
-        // Komponen RightSection untuk menentukan apakah SalesCard dan DonutChart ditampilkan
-        function RightSection() {
-          const location = useLocation(); // Ambil path saat ini
-        
-          // Tampilkan SalesCard dan DonutChart hanya jika path bukan '/katalog-produk'
-          if (
-            location.pathname === "/katalog-produk" ||
-            location.pathname === "/order-management"
-          ) {
-            return null;
-          }
-        
-          return (
-            <div className="flex-none w-[21dvw] h-screen overflow-hidden bg-white">
-              <div className="py-8 px-3 flex flex-col">
-                <SalesCard />
-                <div className="mt-4">
-                  <DonutChart />
-                </div>
-              </div>
-            </div>
-          );
-        }
+    },
+    {
+      id: 25,
+      customer: "William Harris",
+      email: "william@mail.com",
+      orderId: "ORD025",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-8-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 26,
+      customer: "Sophia Lee",
+      email: "sophia@mail.com",
+      orderId: "ORD026",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-11-15",
+      jumlah: 1,
+      totalHarga: 300000,
+    },
+    {
+      id: 27,
+      customer: "Michael Brown",
+      email: "michael@mail.com",
+      orderId: "ORD027",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-10-20",
+      jumlah: 3,
+      totalHarga: 600000,
+    },
+    {
+      id: 28,
+      customer: "Eva Davis",
+      email: "eva@mail.com",
+      orderId: "ORD028",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-11-25",
+      jumlah: 2,
+      totalHarga: 500000,
+    },
+    {
+      id: 29,
+      customer: "David Wilson",
+      email: "david@mail.com",
+      orderId: "ORD029",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-01-30",
+      jumlah: 1,
+      totalHarga: 200000,
+    },
+    {
+      id: 30,
+      customer: "Olivia Clark",
+      email: "olivia@mail.com",
+      orderId: "ORD030",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-02-05",
+      jumlah: 1,
+      totalHarga: 135000,
+    },
+    {
+      id: 31,
+      customer: "James Taylor",
+      email: "james@mail.com",
+      orderId: "ORD031",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-02-10",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 31,
+      customer: "Super Man",
+      email: "superman@mail.com",
+      orderId: "ORD031",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-02-10",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 32,
+      customer: "Emma Johnson",
+      email: "emma@mail.com",
+      orderId: "ORD032",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-03-15",
+      jumlah: 4,
+      totalHarga: 800000,
+    },
+    {
+      id: 33,
+      customer: "Daniel White",
+      email: "daniel@mail.com",
+      orderId: "ORD033",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-04-20",
+      jumlah: 3,
+      totalHarga: 250000,
+    },
+    {
+      id: 34,
+      customer: "Ava Martin",
+      email: "ava@mail.com",
+      orderId: "ORD034",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-05-25",
+      jumlah: 2,
+      totalHarga: 600000,
+    },
+    {
+      id: 35,
+      customer: "William Harris",
+      email: "william@mail.com",
+      orderId: "ORD035",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-10-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 36,
+      customer: "Sophia Lee",
+      email: "sophia@mail.com",
+      orderId: "ORD036",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-07-15",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 36,
+      customer: "Chaolan Lee",
+      email: "leechaolan@mail.com",
+      orderId: "ORD036",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-07-15",
+      jumlah: 2,
+      totalHarga: 500000,
+    },
+    {
+      id: 37,
+      customer: "Michael Brown",
+      email: "michael@mail.com",
+      orderId: "ORD037",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-08-20",
+      jumlah: 3,
+      totalHarga: 600000,
+    },
+    {
+      id: 38,
+      customer: "Eva Davis",
+      email: "eva@mail.com",
+      orderId: "ORD038",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-09-25",
+      jumlah: 2,
+      totalHarga: 100000,
+    },
+    {
+      id: 39,
+      customer: "David Wilson",
+      email: "david@mail.com",
+      orderId: "ORD039",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-10-30",
+      jumlah: 1,
+      totalHarga: 300000,
+    },
+    {
+      id: 40,
+      customer: "Olivia Clark",
+      email: "olivia@mail.com",
+      orderId: "ORD040",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-11-8",
+      jumlah: 2,
+      totalHarga: 300000,
+    },
+    {
+      id: 41,
+      customer: "James Taylor",
+      email: "james@mail.com",
+      orderId: "ORD041",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-12-10",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 41,
+      customer: "Law Fury",
+      email: "lawfurry@mail.com",
+      orderId: "ORD041",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-12-10",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 42,
+      customer: "Emma Johnson",
+      email: "emma@mail.com",
+      orderId: "ORD042",
+      produk: "Snorkeling",
+      status: "Sukses",
+      tanggal: "2024-12-15",
+      jumlah: 4,
+      totalHarga: 300000,
+    },
+    {
+      id: 43,
+      customer: "Daniel White",
+      email: "daniel@mail.com",
+      orderId: "ORD043",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-12-20",
+      jumlah: 3,
+      totalHarga: 750000,
+    },
+    {
+      id: 44,
+      customer: "Ava Martin",
+      email: "ava@mail.com",
+      orderId: "ORD044",
+      produk: "Bali Safari",
+      status: "Sukses",
+      tanggal: "2024-12-25",
+      jumlah: 1,
+      totalHarga: 100000,
+    },
+    {
+      id: 45,
+      customer: "William Harris",
+      email: "william@mail.com",
+      orderId: "ORD045",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-7-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 46,
+      customer: "Boy Harris",
+      email: "boy@mail.com",
+      orderId: "ORD046",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-11-30",
+      jumlah: 2,
+      totalHarga: 200000,
+    },
+    {
+      id: 47,
+      customer: "Harris Tompson",
+      email: "harris@mail.com",
+      orderId: "ORD047",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-01-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 48,
+      customer: "John Lennon",
+      email: "johnlennon@mail.com",
+      orderId: "ORD048",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-02-28",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 49,
+      customer: "William Harris",
+      email: "william@mail.com",
+      orderId: "ORD049",
+      produk: "Pantai Pandawa",
+      status: "Sukses",
+      tanggal: "2024-03-28",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 50,
+      customer: "Teguh Prawira",
+      email: "teguhprawira@mail.com",
+      orderId: "ORD050",
+      produk: "Rafting Ayung",
+      status: "Sukses",
+      tanggal: "2024-01-30",
+      jumlah: 3,
+      totalHarga: 100000,
+    },
+    {
+      id: 51,
+      customer: "Kamalla Vench",
+      email: "kamalla@mail.com",
+      orderId: "ORD051",
+      produk: "Waterboom Bali",
+      status: "Sukses",
+      tanggal: "2024-01-30",
+      jumlah: 2,
+      totalHarga: 100000,
+    },
+    {
+      id: 52,
+      customer: "Kamalla Vench",
+      email: "kamalla@mail.com",
+      orderId: "ORD052",
+      produk: "Waterboom Bali",
+      status: "Sukses",
+      tanggal: "2024-5-30",
+      jumlah: 2,
+      totalHarga: 400000,
+    },
+    {
+      id: 53,
+      customer: "Barrack Bamoma",
+      email: "kamalla@mail.com",
+      orderId: "ORD053",
+      produk: "Waterboom Bali",
+      status: "Sukses",
+      tanggal: "2024-5-30",
+      jumlah: 3,
+      totalHarga: 400000,
+    },
+    {
+      id: 54,
+      customer: "Carry Johnson",
+      email: "carry@mail.com",
+      orderId: "ORD0054",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-03-09",
+      jumlah: 2,
+      totalHarga: 350000,
+    },
+    {
+      id: 55,
+      customer: "Bat Man",
+      email: "batman@mail.com",
+      orderId: "ORD0055",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-03-09",
+      jumlah: 2,
+      totalHarga: 350000,
+    },
+    {
+      id: 56,
+      customer: "William Bonaparte",
+      email: "bonapartewilliam@mail.com",
+      orderId: "ORD0056",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-05-09",
+      jumlah: 3,
+      totalHarga: 350000,
+    },
+    {
+      id: 57,
+      customer: "Wonder Woman",
+      email: "wonderwoman@mail.com",
+      orderId: "ORD0057",
+      produk: "Nusa Penida",
+      status: "Sukses",
+      tanggal: "2024-05-09",
+      jumlah: 3,
+      totalHarga: 450000,
+    },
+    {
+      id: 58,
+      customer: "Scarlet Witch",
+      email: "scarllet@mail.com",
+      orderId: "ORD0058",
+      produk: "Kintamani Tour",
+      status: "Sukses",
+      tanggal: "2024-04-09",
+      jumlah: 3,
+      totalHarga: 500000,
+    },
+    {
+      id: 59,
+      customer: "Dan Romannor",
+      email: "danromannor@mail.com",
+      orderId: "ORD0059",
+      produk: "Ubud Tour",
+      status: "Sukses",
+      tanggal: "2024-08-09",
+      jumlah: 3,
+      totalHarga: 600000,
+    },
+    {
+      id: 60,
+      customer: "John Doe",
+      email: "johndoe@mail.com",
+      orderId: "ORD0060",
+      produk: "Ubud Tour",
+      status: "Sukses",
+      tanggal: "2024-10-09",
+      jumlah: 3,
+      totalHarga: 400000,
+    },
+    {
+      id: 61,
+      customer: "Paul Pheonix",
+      email: "paulpheonix@mail.com",
+      orderId: "ORD0061",
+      produk: "Ubud Tour",
+      status: "Sukses",
+      tanggal: "2024-10-09",
+      jumlah: 3,
+      totalHarga: 400000,
+    },
+    {
+      id: 62,
+      customer: "John Kanner",
+      email: "johnkanner@mail.com",
+      orderId: "ORD0062",
+      produk: "Kintamani Tour",
+      status: "Sukses",
+      tanggal: "2024-09-09",
+      jumlah: 3,
+      totalHarga: 550000,
+    },
+  ]);
+
+  const categories = ["Tour", "Activity", "Attraction"];
+  const metrics = categories.map(category => ({
+    title: category,
+    value: products.filter(product => product.kategori === category).length.toString()
+  }));
+
+  return (
+    <Router>
+      <div className="flex h-screen overflow-hidden bg-white">
+        {/* Fixed Sidebar */}
+        <div className="flex-none">
+          <Sidebar />
+        </div>
+
+        {/* Scrollable Middle Section */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="p-8">
+            {/* Header */}
+            <Header />
+
+            {/* Routes untuk Dashboard dan Katalog Produk */}
+            <Routes>
+              {/* Route untuk Dashboard */}
+              <Route
+                path="/"
+                element={
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {metrics.map((metric) => (
+                        <MetricCard
+                          key={metric.title}
+                          title={metric.title}
+                          value={metric.value}
+                          isActive={activeProduct === metric.title}
+                          onClick={() => setActiveProduct(metric.title)}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="mt-8">
+                      <SalesChart productType={activeProduct} products={products} orders={orders} />
+                    </div>
+
+                    <div className="mt-2">
+                      <ProductTable />
+                    </div>
+                  </>
+                }
+              />
+
+              {/* Route untuk Katalog Produk */}
+              <Route path="/katalog-produk" element={<KatalogProduk products={products} setProducts={setProducts} />} />
+              <Route path="/order-management" element={<OrderManagement orders={orders} setOrders={setOrders} products={products} />} />
+            </Routes>
+          </div>
+        </div>
+
+        {/* Fixed Right Section */}
+        <RightSection />
+      </div>
+    </Router>
+  );
+}
+
+// Komponen RightSection untuk menentukan apakah SalesCard dan DonutChart ditampilkan
+function RightSection() {
+  const location = useLocation(); // Ambil path saat ini
+
+  // Tampilkan SalesCard dan DonutChart hanya jika path bukan '/katalog-produk'
+  if (
+    location.pathname === "/katalog-produk" ||
+    location.pathname === "/order-management"
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="flex-none w-[21dvw] h-screen overflow-hidden bg-white">
+      <div className="py-8 px-3 flex flex-col">
+        <SalesCard />
+        <div className="mt-4">
+          <DonutChart />
+        </div>
+      </div>
+    </div>
+  );
+}

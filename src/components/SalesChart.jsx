@@ -8,21 +8,27 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-export default function SalesChart({ productType }) {
-  const data = [
-    { month: 'Jan', Tour: 700000, Activity: 400000, Attraction: 400000 },
-    { month: 'Feb', Tour: 600000, Activity: 500000, Attraction: 500000 },
-    { month: 'Mar', Tour: 800000, Activity: 700000, Attraction: 400000 },
-    { month: 'Apr', Tour: 900000, Activity: 600000, Attraction: 700000 },
-    { month: 'Mei', Tour: 700000, Activity: 500000, Attraction: 600000 },
-    { month: 'Jun', Tour: 800000, Activity: 600000, Attraction: 800000 },
-    { month: 'Jul', Tour: 900000, Activity: 700000, Attraction: 900000 },
-    { month: 'Agu', Tour: 850000, Activity: 650000, Attraction: 750000 },
-    { month: 'Sep', Tour: 950000, Activity: 800000, Attraction: 850000 },
-    { month: 'Okt', Tour: 880000, Activity: 750000, Attraction: 800000 },
-    { month: 'Nov', Tour: 920000, Activity: 820000, Attraction: 880000 },
-    { month: 'Des', Tour: 980000, Activity: 900000, Attraction: 950000 },
-  ];
+export default function SalesChart({ productType, products, orders }) {
+  const getSalesData = (category) => {
+    const salesData = orders
+      .filter(order => order.status === 'Sukses' && products.some(product => product.nama === order.produk && product.kategori === category))
+      .reduce((acc, order) => {
+        const month = new Date(order.tanggal).toLocaleString('default', { month: 'short' });
+        const product = products.find(p => p.nama === order.produk);
+        const totalPrice = product ? product.harga * order.jumlah : 0;
+        acc[month] = (acc[month] || 0) + totalPrice;
+        return acc;
+      }, {});
+
+    const data = [];
+    for (let i = 0; i < 12; i++) {
+      const month = new Date(0, i).toLocaleString('default', { month: 'short' });
+      data.push({ month, [category]: salesData[month] || 0 });
+    }
+    return data;
+  };
+
+  const data = getSalesData(productType);
 
   const gradients = {
     Tour: { start: '#517897', end: '#006FFF' },
@@ -71,3 +77,4 @@ export default function SalesChart({ productType }) {
     </div>
   );
 }
+
