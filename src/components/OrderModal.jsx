@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { Tag, Clock, Calendar, Hash, AlertTriangle } from "lucide-react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { AlertTriangle, Hash, Calendar } from "lucide-react";
 
 const getCustomStyles = (mode) => ({
   content: {
@@ -11,8 +11,7 @@ const getCustomStyles = (mode) => ({
     right: "auto",
     bottom: "auto",
     transform: "translate(-50%, -50%)",
-    width: mode === "view" ? "700px" : "600px", // Increased width for edit mode
-    width: mode === "delete" ? "400px" : mode === "view" ? "700px" : "600px",
+    width: mode === "view" ? "700px" : "600px",
     padding: "0",
     borderRadius: "0",
     overflow: "hidden",
@@ -82,12 +81,14 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
     }
   }, [mode]);
 
+  const selectedProduct = products.find(product => product.nama === (order?.produk || (products.length > 0 ? products[0].nama : "")));
+
   const initialValues = {
     custName: order?.customer || "",
     email: order?.email || "",
     productName: order?.produk || (products.length > 0 ? products[0].nama : ""),
-    quantity: order?.jumlah || 0,
-    price: order?.totalHarga || 0,
+    quantity: order?.jumlah || 1,
+    price: order?.totalHarga || (selectedProduct ? selectedProduct.harga : 0),
     status: order?.status || "Sukses",
     date: order?.tanggal || "",
   };
@@ -117,6 +118,18 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
     onRequestClose();
   };
 
+  const handleProductChange = (event, setFieldValue) => {
+    const selectedProductName = event.target.value;
+    const selectedProduct = products.find(product => product.nama === selectedProductName);
+    setFieldValue("price", selectedProduct ? selectedProduct.harga : 0);
+  };
+
+  const handleQuantityChange = (event, setFieldValue, values) => {
+    const quantity = parseInt(event.target.value, 10);
+    const selectedProduct = products.find(product => product.nama === values.productName);
+    setFieldValue("price", selectedProduct ? selectedProduct.harga * quantity : 0);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -134,9 +147,8 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
           },
         },
       }}
-      contentLabel={`${mode} Produk Modal`}
+      contentLabel={`${mode} Order Modal`}
       onClick={(e) => {
-        // Tutup modal hanya jika klik terjadi di luar konten modal
         if (e.target === e.currentTarget) {
           onRequestClose();
         }
@@ -146,7 +158,6 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
       <style>{scrollableContent}</style>
 
       {mode === "delete" ? (
-        // Delete Confirmation Modal
         <div className="p-6">
           <div className="flex flex-col items-center text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
@@ -171,12 +182,11 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
           </div>
         </div>
       ) : mode === "view" ? (
-        // Tampilan khusus View
         <div className="flex flex-col md:flex-row" style={{ border: "none" }}>
           {order?.gambar && order.gambar.length > 0 ? (
             <div className="relative w-full md:w-2/5 p-4 flex items-center justify-center">
               <img
-                src={order.gambar[0]} // Ambil gambar pertama dari array `gambar`
+                src={order.gambar[0]}
                 alt={`Preview ${order.nama}`}
                 className="w-full h-[300px] object-cover rounded-lg shadow-md"
               />
@@ -185,7 +195,6 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
             <p>Tidak ada gambar tersedia.</p>
           )}
 
-          {/* Bagian Detail */}
           <div className="w-full md:w-3/5 p-6 pl-2 overflow-y-auto">
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-3xl font-bold text-gray-800">{initialValues.productName}</h2>
@@ -291,13 +300,12 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
           </div>
         </div>
       ) : (
-        // Form untuk Add dan Edit
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, setFieldValue, values }) => (
             <Form className="w-full p-10">
               <div className="flex justify-between items-center mb-6 border-b pb-4">
                 <h2 className="text-xl font-bold">{mode === "edit" ? "Edit Order" : "Tambah Order Baru"}</h2>
@@ -395,6 +403,7 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
                     type="number"
                     name="quantity"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={(e) => handleQuantityChange(e, setFieldValue, values)}
                   />
                   <ErrorMessage name="quantity" component="div" className="text-red-500 text-sm" />
                 </div>
@@ -413,52 +422,52 @@ function OrderModal({ isOpen, onRequestClose, mode, order, onSubmit, products })
                       backgroundImage:
                         "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
                     }}
+                    onChange={(e) => handleProductChange(e, setFieldValue)}
                   >
                     {products.map((product) => (
                       <option key={product.id} value={product.nama}>
-                      {product.nama}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage name="productName" component="div" className="text-red-500 text-sm" />
+                        {product.nama}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="productName" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Total Harga (Rp)
+                  </label>
+                  <Field
+                    type="number"
+                    name="price"
+                    readOnly
+                    className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                  />
+                  <ErrorMessage name="price" component="div" className="text-red-500 text-sm" />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Total Harga (Rp)
-                </label>
-                <Field
-                  type="number"
-                  name="price"
-                  readOnly
-                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                />
-                <ErrorMessage name="price" component="div" className="text-red-500 text-sm" />
-              </div>
-            </div>
 
-            {/* Tombol Aksi */}
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <button
-                type="button"
-                onClick={onRequestClose}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className={`px-4 py-2 text-white rounded-lg ${mode === "edit" ? "gradient-button-blue" : "gradient-button-green"}`}
-                disabled={isSubmitting}
-              >
-                {mode === "edit" ? "Simpan Perubahan" : "Buat Produk"}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    )}
-  </Modal>
-);
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={onRequestClose}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className={`px-4 py-2 text-white rounded-lg ${mode === "edit" ? "gradient-button-blue" : "gradient-button-green"}`}
+                  disabled={isSubmitting}
+                >
+                  {mode === "edit" ? "Simpan Perubahan" : "Buat Order"}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      )}
+    </Modal>
+  );
 }
 
 export default OrderModal;

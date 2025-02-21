@@ -28,7 +28,7 @@ export default function OrderManagement({ orders, setOrders, products }) {
     if (mode === "view" && order) {
       // Find the complete product data from products array
       const productData = products.find(p => p.nama === order.produk);
-
+  
       // Merge order data with product data
       const enrichedOrder = {
         ...order,
@@ -36,18 +36,17 @@ export default function OrderManagement({ orders, setOrders, products }) {
         // Ensure images are passed through
         gambar: productData?.gambar || []
       };
-
+  
       setSelectedOrder(enrichedOrder);
     } else {
       setSelectedOrder(order);
     }
-
+  
     setModalMode(mode);
     setIsModalOpen(true);
     setIsProductDropdownOpen(false);
   };
-
-  // Fungsi untuk menutup modal
+  
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedOrder(null); // Reset selectedProduct saat modal ditutup
@@ -55,33 +54,40 @@ export default function OrderManagement({ orders, setOrders, products }) {
 
   // Fungsi untuk menambahkan produk baru
   const handleAddOrder = (newOrder) => {
-    setOrders((prevOrders) => {
-      const updatedOrders = [
-        ...prevOrders,
-        {
-          ...newOrder,
-          id: Date.now(), // Tetap buat id unik
-          orderId: newOrder.orderId // Simpan orderId dari modal
-        }
-      ];
-      return updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    });
+    const product = products.find(p => p.nama === newOrder.produk);
+    if (product) {
+      const totalHarga = product.harga * newOrder.jumlah;
+      setOrders((prevOrders) => {
+        const updatedOrders = [
+          ...prevOrders,
+          {
+            ...newOrder,
+            id: Date.now(),
+            orderId: newOrder.orderId,
+            totalHarga: totalHarga
+          }
+        ];
+        return updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+      });
+    }
   };
-
-  // Fungsi untuk mengupdate produk
+  
   const handleUpdateOrder = (updatedOrder) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === selectedOrder.id ? updatedOrder : order
-    );
-    setOrders(updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)));
+    const product = products.find(p => p.nama === updatedOrder.produk);
+    if (product) {
+      const totalHarga = product.harga * updatedOrder.jumlah;
+      const updatedOrders = orders.map((order) =>
+        order.id === selectedOrder.id ? { ...updatedOrder, totalHarga: totalHarga } : order
+      );
+      setOrders(updatedOrders.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)));
+    }
   };
 
-  // Fungsi untuk menghapus produk
   const handleDeleteOrder = (order) => {
     setOrderToDelete(order);
     setIsDeleteModalOpen(true);
   };
-
+  
   const confirmDelete = () => {
     if (orderToDelete) {
       const updatedOrders = orders.filter(
@@ -93,14 +99,13 @@ export default function OrderManagement({ orders, setOrders, products }) {
     }
   };
 
-  // Sorting logic
   const sortData = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
     setSortConfig({ key, direction });
-
+  
     const sorted = [...orders].sort((a, b) => {
       if (key === "tanggal") {
         return direction === "asc"
@@ -112,7 +117,7 @@ export default function OrderManagement({ orders, setOrders, products }) {
       }
       return a[key].localeCompare(b[key]);
     });
-
+  
     setOrders(sorted);
   };
 
